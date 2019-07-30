@@ -30,6 +30,7 @@ class LoginPage extends StatelessWidget{
                 });
               },
             ),
+            //facebook 아직안함
             SignInButton(
               Buttons.Facebook, onPressed: (){},
             ),
