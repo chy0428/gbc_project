@@ -2,21 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-mixin Option implements StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('HGU shop',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-
-      ),
-      body: MyPage(),
-
-    );
-  }
-}
 
 class MyPage extends StatefulWidget {
   @override
@@ -29,6 +14,9 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: Text('My Page')
+        ),
         body: Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -49,6 +37,7 @@ class _MyPageState extends State<MyPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: RaisedButton(
                     child: Text('로그아웃', style: TextStyle(fontSize: 24)),
+                    //로그아웃 하기
                     onPressed: () {
                       FirebaseAuth.instance.signOut();
                       _googleSignIn.signOut();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'home_page.dart';
 import 'my_page.dart';
+import 'search_page.dart';
 
 class TabPage extends StatefulWidget {
   final FirebaseUser user;
@@ -16,7 +17,7 @@ class _TabPageState extends State<TabPage> {
 
   List _pages = [
     HomePage(),
-    Text('p2'),
+    SearchPage(),
     Text('p3'),
     MyPage(),
   ];
