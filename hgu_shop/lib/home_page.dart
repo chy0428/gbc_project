@@ -22,7 +22,6 @@ class Options extends StatefulWidget {
 }
 
 class OptionsState extends State<Options> {
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -66,7 +65,6 @@ class OptionsState extends State<Options> {
                     MaterialPageRoute(builder: (context) => FacilitiesScreen() ),
                   );
                 },
-
               ),
             ),
           ],
@@ -100,7 +98,6 @@ class CafeScreen extends StatelessWidget {
     );
   }
 }
-
 
 class FacilitiesScreen extends StatelessWidget {
   @override
