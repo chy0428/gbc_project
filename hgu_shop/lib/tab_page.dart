@@ -14,13 +14,18 @@ class TabPage extends StatefulWidget {
 
 class _TabPageState extends State<TabPage> {
   int _selectedIndex = 0;
+  List _pages;
+  @override
+  void initState(){
+    super.initState();
+    _pages = [
+      HomePage(),
+      SearchPage(),
+      Text('p3'),
+      MyPage(widget.user),
+    ];
+  }
 
-  List _pages = [
-    HomePage(),
-    SearchPage(),
-    Text('p3'),
-    MyPage(),
-  ];
 
 
   @override
