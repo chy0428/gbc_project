@@ -88,11 +88,15 @@ class FoodScreen extends StatelessWidget {
             stream: Firestore.instance.collection('요식업').snapshots(),
             builder: (context, snapshot){
               if(!snapshot.hasData) return Text('Loading data...');
-              return ListView(children: <Widget>[
-                Text(snapshot.data.documents[0]['name']),
-                Text(snapshot.data.documents[0]['장소'].toString()),
-                Text(snapshot.data.documents[0]['혜택'])
-              ],
+              return ListView.builder(
+                padding: const EdgeInsets.all(4.0),
+                itemBuilder: (context, i){
+                  return new ListTile(
+                    title: new Text('모범 떡볶이'),
+                    subtitle: new Text('북구 천마로 46번길 40', style: new TextStyle(fontStyle: FontStyle.italic, color: Colors.green)),
+                    leading: const Icon(Icons.restaurant),
+                  );
+                },
               );
             }
         )
