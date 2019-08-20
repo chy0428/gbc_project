@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -82,7 +83,20 @@ class FoodScreen extends StatelessWidget {
         title: Text("요식업",
         //style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-    ));
+    ),
+        body: StreamBuilder(
+            stream: Firestore.instance.collection('요식업').snapshots(),
+            builder: (context, snapshot){
+              if(!snapshot.hasData) return Text('Loading data...');
+              return ListView(children: <Widget>[
+                Text(snapshot.data.documents[0]['name']),
+                Text(snapshot.data.documents[0]['장소'].toString()),
+                Text(snapshot.data.documents[0]['혜택'])
+              ],
+              );
+            }
+        )
+    );
   }
 }
 

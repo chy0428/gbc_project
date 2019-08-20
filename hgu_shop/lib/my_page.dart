@@ -96,7 +96,7 @@ class MyPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 90,),
+                  SizedBox(height: 120,),
                   Container(
                       height: 52,
                       margin: EdgeInsets.only(left: 32, right: 32),
@@ -131,6 +131,7 @@ class MyPage extends StatelessWidget {
       ),);
   }
 }
+
 
 //  @override
 //  Widget build(BuildContext context) {
