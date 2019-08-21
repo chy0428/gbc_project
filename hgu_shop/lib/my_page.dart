@@ -15,7 +15,7 @@ class MyPage extends StatelessWidget {
         children: <Widget>[
           //바탕화면 색깔 핑꾸
           ClipPath(
-            child: Container(color: Colors.pink[100].withOpacity(0.8)),
+            child: Container(color: Colors.black.withOpacity(0.8)),
             clipper: getClipper(),
           ),
           Positioned(
@@ -110,8 +110,8 @@ class ReviewList extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text("내가 남긴 리뷰",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
         ));
   }
-//}
+}

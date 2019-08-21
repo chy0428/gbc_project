@@ -36,7 +36,7 @@ class _TabPageState extends State<TabPage> {
 //      ),
       body: Center(child: _pages[_selectedIndex]),
       bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Colors.pink[200], //눌렀을 떄 핑크색
+        fixedColor: Colors.black,
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
