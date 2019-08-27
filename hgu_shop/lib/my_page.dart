@@ -24,8 +24,8 @@ class MyPage extends StatelessWidget {
             child: Column(
             children: <Widget>[
               Container(
-              width: 150.0,
-              height: 150.0,
+              width: 130.0,
+              height: 130.0,
               decoration: BoxDecoration(
               image: DecorationImage(image: NetworkImage(user.photoUrl), fit: BoxFit.cover),
               borderRadius: BorderRadius.all(Radius.circular(75.0)),
@@ -36,8 +36,8 @@ class MyPage extends StatelessWidget {
                 Text(user.email, style: TextStyle(fontSize: 17.0, fontStyle: FontStyle.italic, fontFamily: 'Montserrat'),),
                 SizedBox(height: 25.0),
                 Container(
-                    height: 30.0,
-                    width: 95.0,
+                    height: 35.0,
+                    width: 105.0,
                     child: Material(
                       borderRadius: BorderRadius.circular(20.0),
                       shadowColor: Colors.greenAccent,
@@ -56,8 +56,8 @@ class MyPage extends StatelessWidget {
                     )),
                     SizedBox(height: 25.0),
                 Container(
-                  height: 30.0,
-                  width: 95.0,
+                  height: 35.0,
+                  width: 105.0,
                   child: Material(
                     borderRadius: BorderRadius.circular(20.0),
                     shadowColor: Colors.redAccent,
@@ -73,6 +73,7 @@ class MyPage extends StatelessWidget {
                         child: Text(
                           'Logout',
                           style: TextStyle(color: Colors.white, fontFamily: 'Montserrat'),
+                          //fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -103,14 +104,14 @@ class getClipper extends CustomClipper<Path> {
   }
 }
 
-//// TODO: 내가 작성한 리뷰 목로 보여줄거야아ㅏ아
+//// TODO: 내가 작성한 리뷰 목록 보여줄거야아ㅏ아
 class ReviewList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text("내가 남긴 리뷰",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white),
           ),
         ));
   }
