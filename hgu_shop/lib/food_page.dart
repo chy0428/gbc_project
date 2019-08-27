@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'location_page.dart';
+
 
 
 class FoodScreen extends StatelessWidget {
@@ -35,7 +37,7 @@ class FoodScreen extends StatelessWidget {
         itemBuilder: (BuildContext context, index) {
           return ListTile(
             title: Container(
-              margin: EdgeInsets.fromLTRB(16, 5, 16, 5),
+              margin: EdgeInsets.fromLTRB(16, 9, 16, 9),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.restaurant),
@@ -49,6 +51,9 @@ class FoodScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               fontSize: 20
                           ),),
+                          Text('place', style: TextStyle(
+                              color: Colors.grey[500]
+                          ),),
                         ],
                       )
                   )
@@ -60,7 +65,7 @@ class FoodScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Screen(food: Food[index]),
+                  builder: (context) => Screen(idx: index, food: Food[index]),
                 ),
               );
             },
@@ -73,9 +78,10 @@ class FoodScreen extends StatelessWidget {
 
 class Screen extends StatelessWidget {
   // Declare a field that holds the Todo.
+  final int idx;
   final String food;
   // In the constructor, require a Todo.
-  Screen({Key key, @required this.food}) : super(key: key);
+  Screen({Key key, @required this.idx, this.food}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +95,9 @@ class Screen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          _buildImageSection(),
-          _buildTitleSection(),
-          _buildButtonSection(),
+          _buildImageSection(idx),
+          _buildTitleSection(idx),
+          _buildButtonSection(idx),
           _buildTextSection()
         ],
       ),
@@ -99,12 +105,24 @@ class Screen extends StatelessWidget {
   }
 }
 
-_buildImageSection(){
-  return Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
+_buildImageSection(int idx){
+
+  return Container(
+      child: StreamBuilder(
+          stream: Firestore.instance.collection('요식업').snapshots(),
+          builder: (context, snapshot){
+            if(!snapshot.hasData) return Text('Loading data...');
+            return Column(children: <Widget>[
+              Image.network(snapshot.data.documents[idx]['photo1'])
+            ],
+            );
+          }
+      )
+  );//Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
 }
 
 
-_buildTitleSection(){
+_buildTitleSection(int idx){
   return Container(
     margin: EdgeInsets.all(16),
     child: StreamBuilder(
@@ -116,7 +134,7 @@ _buildTitleSection(){
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(snapshot.data.documents[0]['name'],
+            Text(snapshot.data.documents[idx]['name'],
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize:24
@@ -126,7 +144,7 @@ _buildTitleSection(){
                 Text('영업시간', style: TextStyle(
                   color: Colors.black45,
                   fontWeight: FontWeight.bold,)),
-                Text(snapshot.data.documents[0]['영업시간'], style: TextStyle(
+                Text(snapshot.data.documents[idx]['영업시간'], style: TextStyle(
                     color: Colors.grey[500]
                 ),),
               ],
@@ -137,7 +155,7 @@ _buildTitleSection(){
                 Text('HGU 혜택', style: TextStyle(
                   color: Colors.black45,
                   fontWeight: FontWeight.bold,)),
-                Text('      홀 방문시 찜닭 메뉴에 한해 10% 할인',style: TextStyle(
+                Text(snapshot.data.documents[idx]['혜택'],style: TextStyle(
                     color: Colors.grey[500]),
                 ),
               ],
@@ -149,12 +167,15 @@ _buildTitleSection(){
   }));
 }
 
-_buildButtonSection(){
+_buildButtonSection(int idx){
   return Container(
     margin: EdgeInsets.all(16),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
+//        new GestureDetector(
+//        onTap: () => Navigator.push(_buildButtonItem(Icons.call, Colors.pink, 'CALL'),
+//            MaterialPageRoute(builder: (context) => Store_LocationPage())),
 
         _buildButtonItem(Icons.call, Colors.pink, 'CALL'),
         _buildButtonItem(Icons.place, Colors.pink, 'PLACE'),
