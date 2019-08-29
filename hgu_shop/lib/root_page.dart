@@ -29,3 +29,14 @@ class RootPage extends StatelessWidget{
     );
   }
 }
+//
+//class RootPage extends StatelessWidget{
+//  @override
+//  Widget build(BuildContext context){
+//    return MaterialApp(
+//      home: Scaffold(
+//        body: Container(child: Image.asset('images/app_logo.png'))
+//      )
+//    );
+//  }
+//}
