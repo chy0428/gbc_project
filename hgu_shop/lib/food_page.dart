@@ -363,6 +363,13 @@ _buildButtonItem(IconData icon, MaterialColor color, String name){
   );
 }
 
+_buildTextSection(){
+  return Container(
+    margin: EdgeInsets.all(16),
+    //child:
+  );
+}
+
 
 class EmptyPage extends StatelessWidget {
   @override
