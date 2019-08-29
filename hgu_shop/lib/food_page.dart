@@ -113,7 +113,7 @@ _buildImageSection(int idx){
           builder: (context, snapshot){
             if(!snapshot.hasData) return Text('Loading data...');
             return Column(children: <Widget>[
-              Image.network(snapshot.data.documents[idx]['photo1'])
+              Image.network(snapshot.data.documents[idx]['photo2'])
             ],
             );
           }
@@ -134,7 +134,8 @@ _buildTitleSection(int idx){
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(snapshot.data.documents[idx]['name'],
+            Text(snapshot.data.documents[idx]['''name'''],
+              softWrap: true,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize:24
@@ -144,7 +145,10 @@ _buildTitleSection(int idx){
                 Text('영업시간', style: TextStyle(
                   color: Colors.black45,
                   fontWeight: FontWeight.bold,)),
-                Text(snapshot.data.documents[idx]['영업시간'], style: TextStyle(
+                Text(snapshot.data.documents[idx]['''영업시간'''],
+
+          softWrap: true,
+          style: TextStyle(
                     color: Colors.grey[500]
                 ),),
               ],
