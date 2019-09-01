@@ -1,7 +1,6 @@
 import 'dart:io'; // File image  File에서 import
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart'; // package 추가 !!
-import 'review_page.dart';
 
 class WritePage extends StatefulWidget {
   @override
@@ -57,6 +56,7 @@ class _WritePageState extends State<WritePage> {
                         ),
                         decoration: InputDecoration(
                           hintText: ' 내용을 입력해 주세요.',
+                         // controller: textEditingController,
                           border: InputBorder.none,
                           labelText: '  내용',
 

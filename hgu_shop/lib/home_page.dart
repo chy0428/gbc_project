@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart'
     show AppBar, BuildContext, Center, Colors, Column, EdgeInsets, FontWeight, Image, InkWell, MainAxisAlignment, MaterialPageRoute, Navigator, Padding, RaisedButton, Row, Scaffold, State, StatefulWidget, StatelessWidget, Text, TextStyle, Widget;
-import '../food_page.dart' show FoodScreen;
-import '../cafe_page.dart' show CafeScreen;
-import '../facilities_page.dart';
+import 'food_page.dart' show FoodScreen;
+import 'cafe_page.dart' show CafeScreen;
+import 'facilities_page.dart';
 
 class HomePage extends StatelessWidget {
   @override

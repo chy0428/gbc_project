@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hgu_shop/favorite_page.dart';
-import 'package:hgu_shop/model/home_page.dart' as prefix0;
-import 'home_page.dart';
+import 'package:hgu_shop/home_page.dart' as prefix0;
+import '../home_page.dart';
 import 'my_page.dart';
 import 'search_page.dart';
 

@@ -66,7 +66,7 @@ class _Store_LocationPageState extends State<Store_LocationPage> {
             width: MediaQuery.of(context).size.width,
             child: GoogleMap(initialCameraPosition: CameraPosition(
                 target: LatLng(36.055427, 129.363059), // 한동대 위도 경도
-                zoom: 12.0
+                zoom: 15.0
             ),
               markers: Set.from(allMarkers), // marker
               // onMapCreated: mapCreated,

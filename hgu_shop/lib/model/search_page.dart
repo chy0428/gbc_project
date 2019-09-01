@@ -8,9 +8,9 @@ class SearchPage extends StatelessWidget {
 //    return DataSearch();
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset('images/logo.png'),
+        title: Image.asset('images/logo.png', width: 80),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.search),
+          IconButton(icon: Icon(Icons.search,),
               onPressed: (){
                 showSearch(context: context, delegate: DataSearch());
               })
@@ -23,29 +23,40 @@ class SearchPage extends StatelessWidget {
 class Photo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Row(children: <Widget>[
-        makeImage(BoxFit.fill),
-        makeImage(BoxFit.fill),
-      ]),
-      Row(children: <Widget>[
-        makeImage(BoxFit.fill),
-        makeImage(BoxFit.fill),
-      ]),
-      Row(children: <Widget>[
-        makeImage(BoxFit.fill),
-        makeImage(BoxFit.fill),
-      ]),
-    ]);
-  }
-
-  Widget makeImage(BoxFit option) {
-    return Container(
-      child: Image.asset('images/logo.png', width: 150, height: 150, fit: option),
-      padding: EdgeInsets.only(left: 2, right: 2, bottom: 1),
+    // TODO: implement build
+    return SizedBox.expand(
+      child: Image.asset(
+          'images/photo3.png',
+          fit: BoxFit.cover
+      ),
     );
+
   }
+//  @override
+////  Widget build(BuildContext context) {
+////    return Column(children: <Widget>[
+////      Row(children: <Widget>[
+////        makeImage(BoxFit.fill),
+////        makeImage(BoxFit.fill),
+////      ]),
+////      Row(children: <Widget>[
+////        makeImage(BoxFit.fill),
+////        makeImage(BoxFit.fill),
+////      ]),
+////      Row(children: <Widget>[
+////        makeImage(BoxFit.fill),
+////        makeImage(BoxFit.fill),
+////      ]),
+////    ]);
 }
+
+//  Widget makeImage(BoxFit option) {
+//    return Container(
+//      child: Image.asset('images/photo.jpeg', width: , height: 150, fit: option),
+//      padding: EdgeInsets.only(left: 2, right: 2, bottom: 1),
+//    );
+//  }
+//}
 
 class DataSearch extends SearchDelegate<String> {
 

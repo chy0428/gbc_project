@@ -42,7 +42,7 @@ class FacilitiesScreen extends StatelessWidget {
               margin: EdgeInsets.fromLTRB(16, 9, 16, 9),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.restaurant),
+                  Icon(Icons.business),
                   Text('         '),
                   Container(
 //                      width: 280.0,
@@ -54,7 +54,7 @@ class FacilitiesScreen extends StatelessWidget {
                               fontSize: 20
                           ),),
                           Text('place', style: TextStyle(
-                              color: Colors.grey[500]
+                              color: Colors.pink[200]
                           ),),
                         ],
                       )
@@ -67,7 +67,7 @@ class FacilitiesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Screen(idx: index, food: Food[index]),
+                  builder: (context) => FScreen(idx: index, food: Food[index]),
                 ),
               );
             },
@@ -78,12 +78,12 @@ class FacilitiesScreen extends StatelessWidget {
   }
 }
 
-class Screen extends StatelessWidget {
+class FScreen extends StatelessWidget {
   // Declare a field that holds the Todo.
   final int idx;
   final String food;
   // In the constructor, require a Todo.
-  Screen({Key key, @required this.idx, this.food}) : super(key: key);
+  FScreen({Key key, @required this.idx, this.food}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +96,7 @@ class Screen extends StatelessWidget {
               Text(food,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
-              Icon(Icons.favorite_border, color: Colors.grey[700],)
+              FavoriteWidget(),
             ],
           )
 
@@ -239,7 +239,7 @@ _buildButtonItems(IconData icon, String name){
 _buildTimeSetting(){
   return Container(
     color: Colors.white,
-    margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
+    margin: EdgeInsets.fromLTRB(16, 8, 16, 0),
     child: Text('영업시간', style: TextStyle(
       color: Colors.grey[800],
       fontSize: 13,
@@ -411,6 +411,41 @@ class EmptyPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("EmptyPage"),
+      ),
+    );
+  }
+}
+
+
+
+class FavoriteWidget extends StatefulWidget {
+  @override
+  _FavoriteWidgetState createState() => _FavoriteWidgetState();
+}
+
+class _FavoriteWidgetState extends State<FavoriteWidget> {
+  bool _isFavorited = false;
+
+  void _toggleFavorite() {
+    setState(() {
+      if(_isFavorited) {
+        _isFavorited = false;
+      } else {
+        _isFavorited = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container (
+      padding: EdgeInsets.all(0.0),
+      child: IconButton(
+        icon: (_isFavorited
+            ? Icon(Icons.favorite)
+            : Icon(Icons.favorite_border, color: Colors.grey[700],)),
+        color: Colors.red[500],
+        onPressed: _toggleFavorite,
       ),
     );
   }

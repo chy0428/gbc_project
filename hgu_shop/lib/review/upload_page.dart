@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../Posts.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:hgu_shop/review/posts.dart';
+import 'UploadPhoto_page.dart';
 
 // 업로드 했을 때 쓰이는 기능
 
@@ -41,7 +42,7 @@ class _UploadPageState extends State<UploadPage> {
     });
   }
 
-  Widget PostsUI(String image, String description, String date, String time ){
+  Widget PostsUI(String image, String description, String date, String time){
     return new Card(
         elevation: 10.0,
         margin: EdgeInsets.all(15.0),
@@ -72,7 +73,7 @@ class _UploadPageState extends State<UploadPage> {
 
               SizedBox(height: 10.0,),
 
-              Image.network(image, fit: BoxFit.cover,),
+              new Image.network(image, fit: BoxFit.cover,),
 
               SizedBox(height: 10.0,),
 
@@ -92,13 +93,12 @@ class _UploadPageState extends State<UploadPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Image'),
+        title: Text('Review Page'),
         backgroundColor: Colors.pink,
       ),
       body: Container(
-        child: postsList.length == 0 ? Text("No blog Post available")
-
-            : new ListView.builder(
+        child: postsList.length == null? Text("No review available"):
+             new ListView.builder(
           itemCount: postsList.length,
           itemBuilder: (_, index){
             return PostsUI(
@@ -112,5 +112,4 @@ class _UploadPageState extends State<UploadPage> {
       ),
     );
   }
-
 }

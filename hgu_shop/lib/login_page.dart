@@ -10,52 +10,61 @@ class LoginPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(30.0),
-            )
-            ,
-            Image.asset('images/logo.png', width: 180),
-            /*Text('HGU Shop',
-              style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
-            ),*/
-            Padding(
-              padding: EdgeInsets.all(80.0),
-            ),
-            /*SignInButton(
-              Buttons.Google,
-              onPressed: (){
-                _handleSignIn().then((user){
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('images/background.png'),
+              fit: BoxFit.cover
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(30.0),
+              )
+              ,
+              Image.asset('images/firstlogo.png', width: 180),
+              /*Text('HGU Shop',
+                    style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
+                  ),*/
+              Padding(
+                padding: EdgeInsets.all(80.0),
+              ),
+              /*SignInButton(
+                    Buttons.Google,
+                    onPressed: (){
+                      _handleSignIn().then((user){
 //                  print('TEST');
 //                  print(user);
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => TabPage(user)));
-                });
-              },
-            )*/
-            Padding(padding: EdgeInsets.all(8.0),
-              child: InkWell(
-                child: Image.asset('images/login.png', width: 180),
-                onTap: (){
-                  _handleSignIn().then((user){
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => TabPage(user))
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) => TabPage(user)));
+                      });
+                    },
+                  )*/
+              Padding(padding: EdgeInsets.all(8.0),
+                child: InkWell(
+                  child: Image.asset('images/login.png', width: 180),
+                  onTap: (){
+                    _handleSignIn().then((user){
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => TabPage(user))
+                      );
+                    }
                     );
-                  }
-                  );
-                },
-              ),
-            )
-            /*SignInButton(
-              Buttons.GoogleDark,
-              onPressed: (){}
-            )*/
-          ],
+                  },
+                ),
+              )
+              /*SignInButton(
+                    Buttons.GoogleDark,
+                    onPressed: (){}
+                  )*/
+            ],
+          ),
         ),
       ),
+
     );
   }
 

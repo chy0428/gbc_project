@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hgu_shop/review/upload_page.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,23 +8,76 @@ import 'dart:io';
 import 'write_page.dart';
 
 class UploadPhotoPage extends StatefulWidget {
+
   @override
   _UploadPhotoPageState createState() => _UploadPhotoPageState();
 }
 
 class _UploadPhotoPageState extends State<UploadPhotoPage> {
-
   File sampleImage;
   String _myValue;
   String url;
+
   final formKey = GlobalKey<FormState>();
-
-  Future getImage() async{
+  //await을 써야해서 future로 return
+  Future getImage() async {
+    //비동기 처리
     var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
-
+    //image를 바꿔줘야함
+    //이미지 상태에 따라서 바뀌어야 함
     setState(() {
       sampleImage = tempImage;
     });
+  }
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+
+    if (form.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void uploadStatusImage() async {
+    if (validateAndSave()) {
+      final StorageReference postImageRef = FirebaseStorage.instance.ref()
+          .child("Post Images");
+
+      var timeKey = new DateTime.now();
+
+      final StorageUploadTask uploadTask = postImageRef.child(
+          timeKey.toString() + ".jpg").putFile(sampleImage);
+
+      var Imageurl = await(await uploadTask.onComplete).ref.getDownloadURL();
+
+      url = Imageurl.toString();
+
+      print("Image Url = " + url);
+
+    }
+  }
+
+  void saveToDatabase(url) {
+    var dbTimeKey = DateTime.now();
+    var formatDate = DateFormat('MMM d, yyyy');
+    var formatTime = DateFormat('EEEE, hh:mm aaa');
+
+    String date = formatDate.format(dbTimeKey);
+    String time = formatTime.format(dbTimeKey);
+
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+
+    var data = {
+      "image": url,
+      "description": _myValue,
+      "data": date,
+      "time": time,
+    };
+
+    ref.child("Posts").push().set(data);
   }
 
   @override
@@ -31,15 +85,14 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Upload Page",
-          style:TextStyle(color: Colors.pink),
+          style: TextStyle(color: Colors.pink),
         ),
-        backgroundColor: Colors.white ,
-
+        backgroundColor: Colors.white,
         centerTitle: true,
         actions: <Widget>[
           IconButton(icon: Icon(Icons.edit),
             color: Colors.pink,
-            onPressed: (){
+            onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => WritePage())
               );
@@ -47,14 +100,14 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
           ),
           IconButton(icon: Icon(Icons.search),
               color: Colors.pink,
-              onPressed: (){
+              onPressed: () {
                 showSearch(context: context, delegate: DataSearch());
               }),
         ],
       ),
       //drawer: Drawer(), // Search Function
       body: Center(
-        child: sampleImage == null? Text("Select an Image"): enableUpload(),
+        child: sampleImage == null ? Text("Select an Image") : enableUpload(),
       ),
 
       floatingActionButton: FloatingActionButton.extended(
@@ -68,7 +121,7 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
     );
   }
 
-  Widget enableUpload(){
+  Widget enableUpload() {
     return Container(
       child: Form(
         key: formKey,
@@ -81,10 +134,10 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
             ),
             TextFormField(
               decoration: InputDecoration(labelText: 'Description'),
-              validator: (value){
+              validator: (value) {
                 return value.isEmpty ? 'Blod Description is required' : null;
               },
-              onSaved: (value){
+              onSaved: (value) {
                 return _myValue = value;
               },
             ),
@@ -97,79 +150,27 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
               textColor: Colors.pink,
               color: Colors.white,
 
-              onPressed: uploadStatusImage,
+              onPressed:
+                uploadStatusImage,
+
             ),
           ],
         ),
       ),
     );
-
   }
-}
 
 
-
-
-bool validateAndSave(){
-  final form = formKey.currentState;
-
-  if(form.validate()){
-    form.save();
-    return true;
-  }else{
-    return false;
+  void goToReviewList() {
+    Navigator.push(context,
+      MaterialPageRoute(builder: (context) {
+        return UploadPage();
+      }
+      ),
+    );
   }
+
 }
-
-void uploadStatusImage()async{
-  if(validateAndSave()){
-    final StorageReference postImageRef = FirebaseStorage.instance.ref().child("Post Images");
-
-    var timeKey = DateTime.now();
-
-    final StorageUploadTask uploadTask = postImageRef.child(timeKey.toString() + ".jpg").putFile(sampleImage);
-
-    var Imageurl = await(await uploadTask.onComplete).ref.getDownloadURL();
-
-    url = Imageurl.toString();
-
-    print("Image Url = " + url);
-
-    goToReviewList();
-    saveToDatabase(url);
-  }
-}
-
-void saveToDatabase(url){
-  var dbTimeKey = DateTime.now();
-  var formatDate = DateFormat('MMM d, yyyy');
-  var formatTime = DateFormat('EEEE, hh:mm aaa');
-
-  String date = formatDate.format(dbTimeKey);
-  String time = formatTime.format(dbTimeKey);
-
-  DatabaseReference ref = FirebaseDatabase.instance.reference();
-
-  var data = {
-    "image":url ,
-    "description":_myValue,
-    "data": date,
-    "time": time,
-  };
-
-  ref.child("Posts").push().set(data);
-}
-
-void goToReviewList(){
-  Navigator.push(context,
-    MaterialPageRoute(builder: (context){
-      return ReviewPage();
-    }
-    ),
-  );
-}
-
-
 
 // Search Page (아래)
 class DataSearch extends SearchDelegate<String> {
@@ -221,7 +222,7 @@ class DataSearch extends SearchDelegate<String> {
         icon: AnimatedIcons.menu_arrow,
         progress: transitionAnimation),
         onPressed: (){
-          close(context, null);
+          //close(context, null);
         });
   }
 
@@ -270,3 +271,4 @@ class DataSearch extends SearchDelegate<String> {
     );
   }
 }
+

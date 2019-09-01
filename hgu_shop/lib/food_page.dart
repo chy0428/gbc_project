@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hgu_shop/review/review_page.dart';
+import 'package:hgu_shop/review/UploadPhoto_page.dart';
+import 'package:hgu_shop/review/upload_page.dart';
 import 'location_page.dart';
 import "package:url_launcher/url_launcher.dart";
 
@@ -25,8 +26,7 @@ class FoodScreen extends StatelessWidget {
     '논스탠다드',
     '달인의 찜닭',
     '호식이 두마리 치킨',
-    '맛찬들 왕소금 구이',
-  ];
+    '맛찬들 왕소금 구이',  ];
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class FoodScreen extends StatelessWidget {
                               fontSize: 20
                           ),),
                           Text('place', style: TextStyle(
-                              color: Colors.pink[200],
+                            color: Colors.pink[200],
                           ),),
                         ],
                       )
@@ -96,7 +96,7 @@ class Screen extends StatelessWidget {
               Text(food,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
-              Icon(Icons.favorite_border, color: Colors.grey[700],)
+              FavoriteWidget(),
             ],
           )
 
@@ -180,7 +180,7 @@ _buildBotton(int idx){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ReviewPage()),
+                        MaterialPageRoute(builder: (context) => UploadPage()),
                       );
                     },
                   ),
@@ -214,8 +214,10 @@ _showDialog(int idx) {
                 ),),
               // 주석으로 막아놓은 actions 매개변수도 확인해 볼 것.
               actions: <Widget>[
-                FlatButton(child: Text('확인'), onPressed: _callPhone),
-                FlatButton(child: Text('취소'), onPressed: () => Navigator.pop(context)),
+                FlatButton(child: Text('확인', style: TextStyle(color:
+                Colors.pinkAccent)), onPressed: _callPhone),
+                FlatButton(child: Text('취소', style: TextStyle(color:
+                Colors.pinkAccent)), onPressed: () => Navigator.pop(context)),
               ],
             );
           }
@@ -239,7 +241,7 @@ _buildButtonItems(IconData icon, String name){
 _buildTimeSetting(){
   return Container(
     color: Colors.white,
-    margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
+    margin: EdgeInsets.fromLTRB(16, 8, 16, 0),
     child: Text('영업시간', style: TextStyle(
       color: Colors.grey[800],
       fontSize: 13,
@@ -300,109 +302,6 @@ _buildBenefit(int idx){
       ));
 }
 
-_buildName(int idx){
-  return Container(
-      margin: EdgeInsets.all(16),
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
-          builder: (context, snapshot){
-            if(!snapshot.hasData) return Text('Loading data...');
-            return Text(snapshot.data.documents[idx]['''name'''],
-              softWrap: true,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize:24
-              ),);
-          }
-      ));
-
-}
-
-
-_buildTitleSection(int idx){
-  return Container(
-      margin: EdgeInsets.all(16),
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
-          builder: (context, snapshot){
-            if(!snapshot.hasData) return Text('Loading data...');
-
-            return Row(children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(snapshot.data.documents[idx]['''name'''],
-                    softWrap: true,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize:24
-                    ),),
-                  Row(
-                    children: <Widget>[
-                      Text('영업시간', style: TextStyle(
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,)),
-                      Text(snapshot.data.documents[idx]['''영업시간'''],
-
-                        softWrap: true,
-                        style: TextStyle(
-                            color: Colors.grey[500]
-                        ),),
-                    ],
-                  ),
-
-                  Row(
-                    children: <Widget>[
-                      Text('HGU 혜택', style: TextStyle(
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,)),
-                      Text(snapshot.data.documents[idx]['혜택'],style: TextStyle(
-                          color: Colors.grey[500]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-            );
-          }));
-}
-
-
-_buildButtonSection(int idx){
-  return Container(
-    margin: EdgeInsets.all(16),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-//        new GestureDetector(
-//        onTap: () => Navigator.push(_buildButtonItem(Icons.call, Colors.pink, 'CALL'),
-//            MaterialPageRoute(builder: (context) => Store_LocationPage())),
-
-        _buildButtonItem(Icons.call, Colors.pink, 'CALL'),
-        _buildButtonItem(Icons.place, Colors.pink, 'PLACE'),
-        _buildButtonItem(Icons.favorite_border, Colors.pink, 'LIKE'),
-      ],
-    ),
-  );
-}
-
-_buildButtonItem(IconData icon, MaterialColor color, String name){
-  return Column(
-    children: <Widget>[
-      Icon(icon, color: color,),
-      Text(name, style: TextStyle(color: color),),
-    ],
-  );
-}
-
-_buildTextSection(){
-  return Container(
-    margin: EdgeInsets.all(16),
-    //child:
-  );
-}
-
 
 class EmptyPage extends StatelessWidget {
   @override
@@ -411,6 +310,39 @@ class EmptyPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("EmptyPage"),
+      ),
+    );
+  }
+}
+
+class FavoriteWidget extends StatefulWidget {
+  @override
+  _FavoriteWidgetState createState() => _FavoriteWidgetState();
+}
+
+class _FavoriteWidgetState extends State<FavoriteWidget> {
+  bool _isFavorited = false;
+
+  void _toggleFavorite() {
+    setState(() {
+      if(_isFavorited) {
+        _isFavorited = false;
+      } else {
+        _isFavorited = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container (
+      padding: EdgeInsets.all(0.0),
+      child: IconButton(
+        icon: (_isFavorited
+            ? Icon(Icons.favorite)
+            : Icon(Icons.favorite_border, color: Colors.grey[700],)),
+        color: Colors.red[500],
+        onPressed: _toggleFavorite,
       ),
     );
   }
