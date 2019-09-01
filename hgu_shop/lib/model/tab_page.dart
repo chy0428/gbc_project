@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hgu_shop/favorite_page.dart';
+import 'package:hgu_shop/model/home_page.dart' as prefix0;
 import 'home_page.dart';
 import 'my_page.dart';
 import 'search_page.dart';
@@ -21,7 +23,7 @@ class _TabPageState extends State<TabPage> {
     _pages = [
       HomePage(),
       SearchPage(),
-      Text('p3'),
+      FavoritePage(),
       MyPage(widget.user),
     ];
   }
@@ -36,7 +38,7 @@ class _TabPageState extends State<TabPage> {
 //      ),
       body: Center(child: _pages[_selectedIndex]),
       bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Colors.black,
+        fixedColor: Colors.pinkAccent,
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,

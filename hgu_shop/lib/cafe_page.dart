@@ -1,38 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hgu_shop/review/review_page.dart';
 import 'location_page.dart';
 import "package:url_launcher/url_launcher.dart";
 
 
 
-class FoodScreen extends StatelessWidget {
+class CafeScreen extends StatelessWidget {
   final List<String> Food = <String>[
-    '본카츠야',
-    '서가앤쿡',
-    '모범떡볶이',
-    '라라코스트',
-    '오랑 발리',
-    '도르리 식당',
-    '동궁 찜닭 (양덕점)',
-    '토시래',
-    '라멘 베라보',
-    '9월애',
-    '일봉 족발',
-    '쌀통닭',
-    '신전 떡볶이',
-    '논스탠다드',
-    '달인의 찜닭',
-    '호식이 두마리 치킨',
-    '맛찬들 왕소금 구이',
+    '투썸플레이스',
+    '달콤커피',
+    '카페콩',
+    '디저트39',
+    '양덕동 마카롱',
+    '잇브레드',
+    '클레식 북스',
+    '모캄보',
+    '엣지브라운',
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("요식업"),
+        title: Text("카페 및 베이커리"),
       ),
       body: ListView.builder(
         itemCount: Food.length,
@@ -54,7 +45,7 @@ class FoodScreen extends StatelessWidget {
                               fontSize: 20
                           ),),
                           Text('place', style: TextStyle(
-                              color: Colors.pink[200],
+                              color: Colors.grey[500]
                           ),),
                         ],
                       )
@@ -120,7 +111,7 @@ class Screen extends StatelessWidget {
 _buildImageSection(int idx){
   return Container(
       child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
           builder: (context, snapshot){
             if(!snapshot.hasData) return Text('Loading data...');
             return Column(children: <Widget>[
@@ -136,7 +127,7 @@ _buildBotton(int idx){
   return Container(
       color: Colors.white,
       child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text('Loading data...');
             return Row(
@@ -180,7 +171,7 @@ _buildBotton(int idx){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ReviewPage()),
+                        MaterialPageRoute(builder: (context) => EmptyPage()),
                       );
                     },
                   ),
@@ -195,7 +186,7 @@ _buildBotton(int idx){
 _showDialog(int idx) {
   return Container(
       child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
           builder: (context, snapshot){
             if(!snapshot.hasData) return Text('Loading data...');
             _callPhone() async {
@@ -285,7 +276,7 @@ _buildBenefit(int idx){
       color: Colors.white,
       margin: EdgeInsets.fromLTRB(32, 0, 16, 0),
       child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text('Loading data...');
             return
@@ -304,7 +295,7 @@ _buildName(int idx){
   return Container(
       margin: EdgeInsets.all(16),
       child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
           builder: (context, snapshot){
             if(!snapshot.hasData) return Text('Loading data...');
             return Text(snapshot.data.documents[idx]['''name'''],
@@ -323,7 +314,7 @@ _buildTitleSection(int idx){
   return Container(
       margin: EdgeInsets.all(16),
       child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
           builder: (context, snapshot){
             if(!snapshot.hasData) return Text('Loading data...');
 

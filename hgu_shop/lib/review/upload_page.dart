@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'posts.dart';
+import '../Posts.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-
+// 업로드 했을 때 쓰이는 기능
 
 class UploadPage extends StatefulWidget {
   @override
@@ -12,30 +12,6 @@ class UploadPage extends StatefulWidget {
 class _UploadPageState extends State<UploadPage> {
 
   List<Posts> postsList = [];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Review List'),
-        backgroundColor: Colors.black,
-      ),
-      body: Container(
-        child: postsList.length == 0 ? Text("No blog Post available")
-            : new ListView.builder(
-          itemCount: postsList.length,
-          itemBuilder: (_, index){
-            return PostsUI(
-              postsList[index].image,
-              postsList[index].description,
-              postsList[index].date,
-              postsList[index].time,
-            );
-          },
-        ),
-      ),
-    );
-  }
 
   @override
   void initState(){
@@ -60,12 +36,12 @@ class _UploadPageState extends State<UploadPage> {
       }
 
       setState(() {
-        print('Lenth : $postsList.length');
+        print('Length : $postsList.length');
       });
     });
   }
 
-  Widget PostsUI(String image , String description, String date, String time ){
+  Widget PostsUI(String image, String description, String date, String time ){
     return new Card(
         elevation: 10.0,
         margin: EdgeInsets.all(15.0),
@@ -102,7 +78,7 @@ class _UploadPageState extends State<UploadPage> {
 
               Text(
                 description,
-                style: Theme.of(context).textTheme.subtitle,
+                style: Theme.of(context).textTheme.subhead,
                 textAlign: TextAlign.center,
               ),
             ],
@@ -111,4 +87,30 @@ class _UploadPageState extends State<UploadPage> {
     );
 
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Upload Image'),
+        backgroundColor: Colors.pink,
+      ),
+      body: Container(
+        child: postsList.length == 0 ? Text("No blog Post available")
+
+            : new ListView.builder(
+          itemCount: postsList.length,
+          itemBuilder: (_, index){
+            return PostsUI(
+              postsList[index].image,
+              postsList[index].description,
+              postsList[index].date,
+              postsList[index].time,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
 }

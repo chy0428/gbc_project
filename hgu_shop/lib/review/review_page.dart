@@ -4,14 +4,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'write_page.dart';
 
-
-class UploadPage extends StatefulWidget {
+class ReviewPage extends StatefulWidget {
   @override
-  _UploadPageState createState() => _UploadPageState();
+  _ReviewPageState createState() => _ReviewPageState();
 }
 
-class _UploadPageState extends State<UploadPage> {
+class _ReviewPageState extends State<ReviewPage> {
 
   File sampleImage;
   String _myValue;
@@ -45,20 +45,20 @@ class _UploadPageState extends State<UploadPage> {
 
       final StorageUploadTask uploadTask = postImageRef.child(timeKey.toString() + ".jpg").putFile(sampleImage);
 
-      var Imageurl = await (await uploadTask.onComplete).ref.getDownloadURL();
+      var Imageurl = await(await uploadTask.onComplete).ref.getDownloadURL();
 
       url = Imageurl.toString();
 
       print("Image Url = " + url);
 
-      goToUploadList();
+      goToReviewList();
       saveToDatabase(url);
     }
   }
 
   void saveToDatabase(url){
     var dbTimeKey = DateTime.now();
-    var formatDate = DateFormat('MMM d,yyyy');
+    var formatDate = DateFormat('MMM d, yyyy');
     var formatTime = DateFormat('EEEE, hh:mm aaa');
 
     String date = formatDate.format(dbTimeKey);
@@ -76,10 +76,10 @@ class _UploadPageState extends State<UploadPage> {
     ref.child("Posts").push().set(data);
   }
 
-  void goToUploadList(){
+  void goToReviewList(){
     Navigator.push(context,
       MaterialPageRoute(builder: (context){
-        return UploadPage();
+        return ReviewPage();
       }
       ),
     );
@@ -89,24 +89,29 @@ class _UploadPageState extends State<UploadPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Review list'),
-        backgroundColor: Colors.black,
+        title: Text("Review Page",
+          style:TextStyle(color: Colors.pink),
+        ),
+        backgroundColor: Colors.white ,
+
         centerTitle: true,
         actions: <Widget>[
           IconButton(icon: Icon(Icons.edit),
+            color: Colors.pink,
             onPressed: (){
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UploadPage())
+                  MaterialPageRoute(builder: (context) => WritePage())
               );
             },
           ),
           IconButton(icon: Icon(Icons.search),
+              color: Colors.pink,
               onPressed: (){
                 showSearch(context: context, delegate: DataSearch());
               }),
         ],
       ),
-      drawer: Drawer(), // Search Function
+      //drawer: Drawer(), // Search Function
       body: Center(
         child: sampleImage == null? Text("Select an Image"): enableUpload(),
       ),
@@ -114,10 +119,10 @@ class _UploadPageState extends State<UploadPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: getImage,
         tooltip: 'Add Image',
-        icon: Icon(Icons.add_a_photo, color: Colors.white),
+        icon: Icon(Icons.add_a_photo, color: Colors.pink),
         label: Text("Add Image"),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.black,
+        foregroundColor: Colors.pink,
+        backgroundColor: Colors.white,
       ),
     );
   }
@@ -147,13 +152,11 @@ class _UploadPageState extends State<UploadPage> {
             RaisedButton(
               elevation: 10.0,
               child: Text("Add a New Post"),
-              textColor: Colors.white,
-              color: Colors.black,
+              textColor: Colors.pink,
+              color: Colors.white,
 
               onPressed: uploadStatusImage,
             ),
-
-
           ],
         ),
       ),
@@ -161,6 +164,7 @@ class _UploadPageState extends State<UploadPage> {
 
   }
 }
+
 
 // Search Page (아래)
 class DataSearch extends SearchDelegate<String> {
@@ -223,7 +227,7 @@ class DataSearch extends SearchDelegate<String> {
       height: 100.0, //그 안에 다른 함수들을 넣어 각 경우 마다 page를 달리한다.
       width: 100.0,
       child: Card(
-        color: Colors.red,
+        color: Colors.pink,
         shape: StadiumBorder(),
         child: Center(
           child: Text(query),
@@ -237,7 +241,7 @@ class DataSearch extends SearchDelegate<String> {
     // show when someone searchs for something
     final suggestionList = query.isEmpty
         ?recentStores
-        :Stores.where((p) => p.startsWith(query)).toList();
+        :Stores.where((p) => p.startsWith(query)).toList(); // 유사한 글자로 찾아주는 기능
 
     return ListView.builder(
       itemBuilder: (context,index) => ListTile(
@@ -261,5 +265,3 @@ class DataSearch extends SearchDelegate<String> {
     );
   }
 }
-
-

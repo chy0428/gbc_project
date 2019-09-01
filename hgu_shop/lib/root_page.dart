@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:flutter/material.dart';
-import 'package:hgu_shop/tab_page.dart';
+import 'package:hgu_shop/model/home_page.dart';
+import 'package:hgu_shop/model/tab_page.dart';
 import 'package:hgu_shop/login_page.dart';
 
 
@@ -19,24 +20,12 @@ class RootPage extends StatelessWidget{
           //tabpage는 파이어베이스 유저 데이터를 받는다
           return TabPage(snapshot.data);
         } else {
-          return LoginPage();
-//          setState(
-//          _return TabPage(snapshot.data);
-//        );
+          return //TabPage(snapshot.data);
+            LoginPage();
+//
           //TabPage(snapshot.data);
         }
       },
     );
   }
 }
-//
-//class RootPage extends StatelessWidget{
-//  @override
-//  Widget build(BuildContext context){
-//    return MaterialApp(
-//      home: Scaffold(
-//        body: Container(child: Image.asset('images/app_logo.png'))
-//      )
-//    );
-//  }
-//}

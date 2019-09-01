@@ -1,45 +1,58 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AppBar, BuildContext, Container, MediaQuery, Scaffold, Stack, State, StatefulWidget, Text, Widget;
+// ignore: implementation_imports
+import 'package:flutter/src/foundation/key.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+// ignore: camel_case_types
 class Store_LocationPage extends StatefulWidget {
+  final int idx;
+
+  const Store_LocationPage({Key key, this.idx}) : super(key: key);
+
   @override
-  _Store_LocationPageState createState() => _Store_LocationPageState();
+  _Store_LocationPageState createState() => _Store_LocationPageState(idx);
 }
 
+// ignore: camel_case_types
 class _Store_LocationPageState extends State<Store_LocationPage> {
   List<Marker> allMarkers=[];
 
-  GoogleMapController _controller;
+  _Store_LocationPageState(int idx);
+//
+//  double get latitude => null;
+//  double get longitude => null;
 
   @override
   void initState(){
     super.initState();
-    allMarkers.add(Marker(markerId: MarkerId('handong'),
-        draggable: false, // marker 드래그 불가능 상태
 
 
-        onTap: (){
-          print('Marker Tapped');
-        },
-        position: LatLng(36.103168, 129.388455)
-    ));
-    allMarkers.add(Marker(markerId: MarkerId('죽도시장'),
+//    allMarkers.add(Marker(markerId: MarkerId('본카츠야'),
+//        draggable: false, // marker 드래그 불가능 상태
+//
+//        onTap: (){
+//          print('Marker Tapped');
+//        },
+//        position: LatLng(36.068351, 129.372673)
+//    ));
+//
+//    allMarkers.add(Marker(markerId: MarkerId('서가앤쿡'),
+//        draggable: false, // marker 드래그 불가능 상태
+//
+//        onTap: (){
+//          print('Marker Tapped');
+//        },
+//        position: LatLng(36.079679, 129.397098)
+//    ));
+    allMarkers.add(Marker(markerId: MarkerId('모범 떡볶'),
         draggable: false, // marker 드래그 불가능 상태
+
         onTap: (){
           print('Marker Tapped');
         },
-        position: LatLng(36.036266, 129.366775)
-    ));
-    allMarkers.add(Marker(markerId: MarkerId('롯데시네마'),
-        draggable: false, // marker 드래그 불가능 상태
-        onTap: (){
-          print('Marker Tapped');
-        },
-        position: LatLng(36.036880, 129.362968)
+        position: LatLng(36.055427, 129.363059)
     ));
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -52,65 +65,15 @@ class _Store_LocationPageState extends State<Store_LocationPage> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: GoogleMap(initialCameraPosition: CameraPosition(
-                target: LatLng(36.103168, 129.388455), // 한동대 위도 경도
+                target: LatLng(36.055427, 129.363059), // 한동대 위도 경도
                 zoom: 12.0
             ),
               markers: Set.from(allMarkers), // marker
-              onMapCreated: mapCreated,
+              // onMapCreated: mapCreated,
             ),
           ),
-            /*Align(
-          alignment: Alignment.bottomCenter,
-          child: InkWell(
-            onTap: movetoHandong,
-            child: Container(
-              height: 40.0,
-              width: 40.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                color: Colors.green
-              ),
-              child: Icon(Icons.forward, color: Colors.white,),
-            ),
-          ),
-        ),*/
-            /*Align(
-            alignment: Alignment.bottomRight,
-            child: InkWell(
-              onTap: movetoJukdoMarket,
-              child: Container(
-                height: 40.0,
-                width: 40.0,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.red
-                ),
-                child: Icon(Icons.backspace, color: Colors.white,),
-              ),
-            ),
-          )*/
           ]
       ),
     );
-  }
-
-  void mapCreated(controller){
-    setState(() {
-      _controller = controller;
-    });
-  }
-
-  // 위치 추가 (수정하면됨) 음식점들
-  movetoHandong(){
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(36.103168, 129.388455),
-            zoom: 14.0,bearing: 45.0,tilt: 45.0)
-    ));
-  }
-  movetoJukdoMarket(){
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(36.036266, 129.366775),
-            zoom: 12.0)
-    ));
   }
 }
