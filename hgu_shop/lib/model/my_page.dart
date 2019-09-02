@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hgu_shop/review/UploadPhoto_page.dart';
+import 'package:hgu_shop/review/upload_page.dart';
 
 class MyPage extends StatelessWidget {
   final FirebaseUser user;
@@ -58,7 +59,7 @@ class MyPage extends StatelessWidget {
                                   child: Image.asset('images/review.png'),
                                   onTap: (){
                                     Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => UploadPhotoPage())
+                                  MaterialPageRoute(builder: (context) => UploadPage())
                                   );
                                   },
                                 )

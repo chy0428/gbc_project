@@ -81,7 +81,7 @@ class _FavoritePageState extends State<FavoritePage> {
         if(i == 0 ){
           Navigator.push(context,
             MaterialPageRoute(builder: (context) =>
-                CCScreen(idx: 8, food: '모캄보')),
+                CCScreen(idx: 7, food: '모캄보')),
           );
         }
         // 디테일 페이지로 이동

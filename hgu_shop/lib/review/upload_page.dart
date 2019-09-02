@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:flutter/material.dart';
 import 'package:hgu_shop/review/posts.dart';
-import 'UploadPhoto_page.dart';
-
-// 업로드 했을 때 쓰이는 기능
 
 class UploadPage extends StatefulWidget {
   @override
@@ -11,38 +9,24 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
+  List<Posts> postMessages = List();
+  Posts posts;
 
-  List<Posts> postsList = [];
+  final FirebaseDatabase database = FirebaseDatabase.instance;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  DatabaseReference databaseReference;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    // 여기서 Posts는 데이터베이스에 Posts 라는 항목을 말함.
-    DatabaseReference postsRef = FirebaseDatabase.instance.reference().child("Posts");
 
-    postsRef.once().then((DataSnapshot snap){
-      var KEYS = snap.value.keys;
-      var DATA = snap.value;
-
-      postsList.clear();
-
-      for(var individualKey in KEYS){
-        Posts posts = Posts(
-          DATA[individualKey]['image'],
-          DATA[individualKey]['description'],
-          DATA[individualKey]['date'],
-          DATA[individualKey]['time'], // database 정보들
-        );
-        postsList.add(posts);
-      }
-
-      setState(() {
-        print('Length : $postsList.length');
-      });
-    });
+    posts = Posts("", "");
+    databaseReference = database.reference().child("post_board");
+    databaseReference.onChildAdded.listen(_onEntryAdded);
+    databaseReference.onChildChanged.listen(_onEntryChanged);
   }
-
-  Widget PostsUI(String image, String description, String date, String time){
+  Widget PostsUI(String image, String description, String date, String time) {
     return new Card(
         elevation: 10.0,
         margin: EdgeInsets.all(15.0),
@@ -60,12 +44,18 @@ class _UploadPageState extends State<UploadPage> {
                 children: <Widget>[
                   Text(
                     date,
-                    style: Theme.of(context).textTheme.subtitle,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .subtitle,
                     textAlign: TextAlign.center,
                   ),
                   Text(
                     time,
-                    style: Theme.of(context).textTheme.subtitle,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .subtitle,
                     textAlign: TextAlign.center,
                   )
                 ],
@@ -79,37 +69,133 @@ class _UploadPageState extends State<UploadPage> {
 
               Text(
                 description,
-                style: Theme.of(context).textTheme.subhead,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .subhead,
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         )
     );
-
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Review Page'),
-        backgroundColor: Colors.pink,
+        title: Text('Review Page', style: TextStyle(color: Colors.pink),),
+        backgroundColor: Colors.white,
       ),
-      body: Container(
-        child: postsList.length == null? Text("No review available"):
-             new ListView.builder(
-          itemCount: postsList.length,
-          itemBuilder: (_, index){
-            return PostsUI(
-              postsList[index].image,
-              postsList[index].description,
-              postsList[index].date,
-              postsList[index].time,
-            );
-          },
-        ),
+
+      body: Column(
+        children: <Widget>[
+          Flexible(
+            flex: 0,
+            child: Center(
+              child: Form(
+                key: formKey,
+                child: Flex(
+                  direction: Axis.vertical,
+                  children: <Widget>[
+                    ListTile(
+                        leading: Icon(Icons.subject),
+                        title: TextFormField(
+                            decoration: InputDecoration(
+                                hintText: "제목을 입력하세요."
+                            ),
+                            initialValue: "",
+                            onSaved: (value) => posts.subject = value,
+                            validator: (value) => value == "" ? value : null)),
+                    ListTile(
+                        leading: Icon(Icons.message),
+                        title: TextFormField(
+                            decoration: InputDecoration(
+                                hintText: "내용을 입력하세요."
+                            ),
+                            initialValue: "",
+                            onSaved: (value) => posts.body = value,
+                            validator: (value) => value == "" ? value : null)),
+                    /*FlatButton(
+                      child: Text("Save"),
+                      color: Colors.redAccent,
+                      onPressed: () {
+                        _submitPostForm();
+                      },
+                    )*/
+                    Padding(
+                      padding: EdgeInsets.all(20.0),
+                    ),
+                    FloatingActionButton.extended(
+                      onPressed: (){
+                        _submitPostForm();
+                      },
+                      icon: Icon(Icons.edit, color: Colors.pink,),
+                      label: Text("Post Up"),
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.pink,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
+          Flexible(
+            child: FirebaseAnimatedList(
+                query: databaseReference,
+                itemBuilder: (_, DataSnapshot snapshot,
+                    Animation<double> animation, int index) {
+                  return Card(
+                    child: ListTile(
+                      leading: IconButton(
+                        icon: Icon(Icons.message),
+                      ),
+                      title: Text(postMessages[index].subject),
+                      subtitle: Text(postMessages[index].body),
+                    ),
+                  );
+                }),
+          ),
+          /*IconButton(
+            icon: Icon(Icons.add_a_photo),
+            onPressed: (){
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ReviewPage())
+              );
+            },
+          ),*/
+        ],
       ),
     );
+  }
+
+  void _onEntryAdded(Event event) {
+    setState(() {
+      postMessages.add(Posts.fromSnapshot(event.snapshot));
+    });
+  }
+
+  void _submitPostForm() {
+    final FormState state = formKey.currentState;
+
+    if (state.validate()) {
+      state.save();
+      state.reset();
+
+      databaseReference.push().set(posts.toJson());
+    }
+  }
+
+  void _onEntryChanged(Event event) {
+    var oldData = postMessages.singleWhere((entry) {
+      return entry.key == event.snapshot.key;
+    });
+
+    setState(() {
+      postMessages[postMessages.indexOf(oldData)] =
+          Posts.fromSnapshot(event.snapshot);
+    });
   }
 }
