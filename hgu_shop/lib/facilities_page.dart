@@ -7,7 +7,7 @@ import "package:url_launcher/url_launcher.dart";
 
 
 class FacilitiesScreen extends StatelessWidget {
-  final List<String> Food = <String>[
+  final List<String> facility = <String>[
     '미지앤맘병원',
     '포항 온천',
     '디자인짐',
@@ -35,7 +35,7 @@ class FacilitiesScreen extends StatelessWidget {
         title: Text("편의 시설"),
       ),
       body: ListView.builder(
-        itemCount: Food.length,
+        itemCount: facility.length,
         itemBuilder: (BuildContext context, index) {
           return ListTile(
             title: Container(
@@ -49,7 +49,7 @@ class FacilitiesScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('${Food[index]}', style: TextStyle(
+                          Text('${facility[index]}', style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20
                           ),),
@@ -67,7 +67,7 @@ class FacilitiesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FScreen(idx: index, food: Food[index]),
+                  builder: (context) => FScreen(idx: index, facility: facility[index]),
                 ),
               );
             },
@@ -81,9 +81,9 @@ class FacilitiesScreen extends StatelessWidget {
 class FScreen extends StatelessWidget {
   // Declare a field that holds the Todo.
   final int idx;
-  final String food;
+  final String facility;
   // In the constructor, require a Todo.
-  FScreen({Key key, @required this.idx, this.food}) : super(key: key);
+  FScreen({Key key, @required this.idx, this.facility}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class FScreen extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(food,
+              Text(facility,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
               FavoriteWidget(),

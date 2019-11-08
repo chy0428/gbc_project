@@ -452,6 +452,7 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
   void _toggleFavorite() {
     setState(() {
       if (_isFavorited) {
+
         _isFavorited = false;
       } else {
         _isFavorited = true;
@@ -472,4 +473,6 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
       ),
     );
   }
+
+
 }

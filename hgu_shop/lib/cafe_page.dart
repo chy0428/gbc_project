@@ -5,9 +5,8 @@ import 'location_page.dart';
 import "package:url_launcher/url_launcher.dart";
 
 
-
 class CafeScreen extends StatelessWidget {
-  final List<String> Food = <String>[
+  final List<String> Cafe = <String>[
     '투썸플레이스',
     '달콤커피',
     '카페콩',
@@ -26,7 +25,7 @@ class CafeScreen extends StatelessWidget {
         title: Text("카페 및 베이커리"),
       ),
       body: ListView.builder(
-        itemCount: Food.length,
+        itemCount: Cafe.length,
         itemBuilder: (BuildContext context, index) {
           return ListTile(
             title: Container(
@@ -40,7 +39,7 @@ class CafeScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('${Food[index]}', style: TextStyle(
+                          Text('${Cafe[index]}', style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20
                           ),),
@@ -58,7 +57,7 @@ class CafeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CScreen(idx: index, food: Food[index]),
+                  builder: (context) => CScreen(idx: index, Cafe: Cafe[index]),
                 ),
               );
             },
@@ -72,9 +71,9 @@ class CafeScreen extends StatelessWidget {
 class CScreen extends StatelessWidget {
   // Declare a field that holds the Todo.
   final int idx;
-  final String food;
+  final String Cafe;
   // In the constructor, require a Todo.
-  CScreen({Key key, @required this.idx, this.food}) : super(key: key);
+  CScreen({Key key, @required this.idx, this.Cafe}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +83,7 @@ class CScreen extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(food,
+              Text(Cafe,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
               FavoriteWidget(),

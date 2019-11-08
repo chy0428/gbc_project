@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import '../cafe_page.dart';
+import '../facilities_page.dart';
 import '../food_page.dart';
+
 
 
 class SearchPage extends StatelessWidget {
@@ -30,37 +33,10 @@ class Photo extends StatelessWidget {
           fit: BoxFit.cover
       ),
     );
-
   }
-//  @override
-////  Widget build(BuildContext context) {
-////    return Column(children: <Widget>[
-////      Row(children: <Widget>[
-////        makeImage(BoxFit.fill),
-////        makeImage(BoxFit.fill),
-////      ]),
-////      Row(children: <Widget>[
-////        makeImage(BoxFit.fill),
-////        makeImage(BoxFit.fill),
-////      ]),
-////      Row(children: <Widget>[
-////        makeImage(BoxFit.fill),
-////        makeImage(BoxFit.fill),
-////      ]),
-////    ]);
 }
-
-//  Widget makeImage(BoxFit option) {
-//    return Container(
-//      child: Image.asset('images/photo.jpeg', width: , height: 150, fit: option),
-//      padding: EdgeInsets.only(left: 2, right: 2, bottom: 1),
-//    );
-//  }
-//}
-
 class DataSearch extends SearchDelegate<String> {
-
-  final List<String> Stores = <String> [
+  final List<String> Stores = <String>[
     '본카츠야',
     '서가앤쿡',
     '모범떡볶이',
@@ -78,6 +54,33 @@ class DataSearch extends SearchDelegate<String> {
     '달인의 찜닭',
     '호식이 두마리 치킨',
     '맛찬들 왕소금 구이',
+    '투썸 플레이스',
+    '달콤커피 장성점',
+    '카페콩',
+    '디저트39',
+    '양덕동 마카롱',
+    '잇브레드',
+    '클래식 북스',
+    '모캄보',
+    '엣지브라운',
+    '미즈앤맘 산부인과',
+    '포항온천',
+    '디자인짐',
+    '라안요가 필라테스',
+    '양덕광천수온천',
+    '클푸',
+    '다비치 안경',
+    'ABC볼링장',
+    '알파 문구 양덕',
+    '밝은성모안과',
+    '만화라떼24시',
+    '바디 팩토리',
+    '이가자 헤어비스',
+    '바이크 엣지',
+    '중앙콘택트안경점',
+    '극동렌트카',
+    'only u gym',
+    '메디컬 닥터스',
   ];
 
   final List<String> recentStores = <String>[
@@ -98,6 +101,33 @@ class DataSearch extends SearchDelegate<String> {
     '달인의 찜닭',
     '호식이 두마리 치킨',
     '맛찬들 왕소금 구이',
+    '투썸 플레이스',
+    '달콤커피 장성점',
+    '카페콩',
+    '디저트39',
+    '양덕동 마카롱',
+    '잇브레드',
+    '클래식 북스',
+    '모캄보',
+    '엣지브라운',
+    '미즈앤맘 산부인과',
+    '포항온천',
+    '디자인짐',
+    '라안요가 필라테스',
+    '양덕광천수온천',
+    '클푸',
+    '다비치 안경',
+    'ABC볼링장',
+    '알파 문구 양덕',
+    '밝은성모안과',
+    '만화라떼24시',
+    '바디 팩토리',
+    '이가자 헤어비스',
+    '바이크 엣지',
+    '중앙콘택트안경점',
+    '극동렌트카',
+    'only u gym',
+    '메디컬 닥터스',
   ];
 
   @override
@@ -111,12 +141,13 @@ class DataSearch extends SearchDelegate<String> {
   }
 
   @override
-  Widget buildLeading(BuildContext context) { //
+  Widget buildLeading(BuildContext context) {
+    //
     // leading icon on the left of the app bar
     return IconButton(icon: AnimatedIcon(
         icon: AnimatedIcons.menu_arrow,
         progress: transitionAnimation),
-        onPressed: (){
+        onPressed: () {
           close(context, null);
         });
   }
@@ -125,12 +156,21 @@ class DataSearch extends SearchDelegate<String> {
   Widget buildResults(BuildContext context) {
     // show some result based on the selection
     var i = 0;
-    for(i = 0; i<16; i++){
+    var index = 0;
+    for(i = 0; i<44; i++){
       if(Stores[i].startsWith(query)) {
         break;
       }
     }
-    return Screen(idx: i, food: Stores[i]);
+    if(i < 17){
+      return Screen(idx: i,food: Stores[i]);
+    }else if(i > 16 && i < 26){
+      index = i - 17;
+      return CScreen(idx: index,Cafe: Stores[i]);
+    }else {
+      index = i - 26;
+      return FScreen(idx: index, facility: Stores[i]);
+    }
   }
 
   @override
@@ -145,18 +185,6 @@ class DataSearch extends SearchDelegate<String> {
         onTap: (){
           showResults(context);
         },
-//        onTap: (){
-//          var i = 0;
-//          for(i = 0; i<17; i++){
-//            if((Stores[index] == Stest[i])) {
-//              break;
-//            }
-//          }
-//          //Screen(idx: index, food: 'food');
-//          Navigator.push(context,
-//          MaterialPageRoute(builder: (context) => Screen(idx: i, food: Stest[i]))
-//          );
-//        },
         leading: Icon(Icons.location_city), // Icon 변경 가능
         title: RichText(text: TextSpan(
             text: suggestionList[index].substring(0,query.length),

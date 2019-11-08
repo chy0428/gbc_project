@@ -1,12 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hgu_shop/review/UploadPhoto_page.dart';
 import 'package:hgu_shop/review/upload_page.dart';
 import 'location_page.dart';
 import "package:url_launcher/url_launcher.dart";
-
-
 
 class FoodScreen extends StatelessWidget {
   final List<String> Food = <String>[
@@ -26,13 +23,14 @@ class FoodScreen extends StatelessWidget {
     '논스탠다드',
     '달인의 찜닭',
     '호식이 두마리 치킨',
-    '맛찬들 왕소금 구이',  ];
+    '맛찬들 왕소금 구이',
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("요식업"),
+        title: Text("음식점"),
       ),
       body: ListView.builder(
         itemCount: Food.length,
@@ -45,7 +43,6 @@ class FoodScreen extends StatelessWidget {
                   Icon(Icons.restaurant),
                   Text('         '),
                   Container(
-//                      width: 280.0,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -84,7 +81,7 @@ class Screen extends StatelessWidget {
   final String food;
   // In the constructor, require a Todo.
   Screen({Key key, @required this.idx, this.food}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     // Use the Todo to create the UI.
@@ -92,15 +89,14 @@ class Screen extends StatelessWidget {
       appBar: AppBar(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(food,
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                children: <Widget>[
+                  Text(food,
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                  FavoriteWidget(),
+                ],
               ),
-              FavoriteWidget(),
-            ],
-          )
-
-      ),
+          ),
       backgroundColor: Colors.white,
       body: ListView(
         children: <Widget>[
@@ -129,7 +125,7 @@ _buildImageSection(int idx){
             );
           }
       )
-  );//Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
+  );
 }
 
 _buildBotton(int idx){
@@ -166,7 +162,6 @@ _buildBotton(int idx){
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
-                        //MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
                       );
                     },
 
