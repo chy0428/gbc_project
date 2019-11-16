@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'location_page.dart';
+import 'facilities_location_page.dart';
 import "package:url_launcher/url_launcher.dart";
 
 
@@ -165,7 +165,7 @@ _buildBotton(int idx){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
+                        MaterialPageRoute(builder: (context) => Facil_Store_LocationPage(idx: idx, latitude: snapshot.data.documents[idx]['latitude'], longitud: snapshot.data.documents[idx]['longitude'])),
                         //MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
                       );
                     },

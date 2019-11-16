@@ -189,7 +189,7 @@ _buildBotton(int idx){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
+                        MaterialPageRoute(builder: (context) => Food_Store_LocationPage(idx: idx)),
                         //MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
                       );
                     },

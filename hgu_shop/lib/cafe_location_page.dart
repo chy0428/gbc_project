@@ -1,37 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart' show AppBar, BuildContext, Colors, Container, EdgeInsets, FontWeight, MediaQuery, Scaffold, Stack, State, StatefulWidget, StreamBuilder, Text, TextStyle, Widget;
+import 'package:flutter/material.dart'
+    show AppBar, BuildContext, Colors, Container, EdgeInsets, FontWeight, MediaQuery, Scaffold, Stack, State, StatefulWidget, StreamBuilder, Text, TextStyle, Widget;
 // ignore: implementation_imports
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/basic.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // ignore: camel_case_types
-class Food_Store_LocationPage extends StatefulWidget {
+class Cafe_Store_LocationPage extends StatefulWidget {
   final int idx;
   final double latitude;
   final double longitud;
 
-  const Food_Store_LocationPage({Key key, this.idx, this.latitude, this.longitud}) : super(key: key);
+  const Cafe_Store_LocationPage({Key key, this.idx, this.latitude, this.longitud}) : super(key: key);
 
   @override
-  _Food_Store_LocationPageState createState() => _Food_Store_LocationPageState(idx,latitude,longitud);
+  _Cafe_Store_LocationPageState createState() => _Cafe_Store_LocationPageState(idx,latitude,longitud);
 }
 
 // ignore: camel_case_types
-class _Food_Store_LocationPageState extends State<Food_Store_LocationPage> {
+class _Cafe_Store_LocationPageState extends State<Cafe_Store_LocationPage> {
   List<Marker> allMarkers=[];
   final int idx;
   final double latitude;
   final double longitud;
 
-  _Food_Store_LocationPageState(this.idx, this.latitude, this.longitud);
-
-
+  _Cafe_Store_LocationPageState(this.idx, this.latitude, this.longitud);
+//  double latitude = 36.055427 ;
+//  double longitud = 129.363059;
 
   @override
   void initState(){
     super.initState();
-    allMarkers.add(Marker(markerId: MarkerId('모범 떡볶'),
+    allMarkers.add(Marker(markerId: MarkerId(' '),
 
         draggable: false, // marker 드래그 불가능 상태
 
@@ -47,7 +48,7 @@ class _Food_Store_LocationPageState extends State<Food_Store_LocationPage> {
     return Scaffold(
       appBar: AppBar(
         title: StreamBuilder(
-            stream: Firestore.instance.collection('요식업').snapshots(),
+            stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return Text('Loading data...');
               return
