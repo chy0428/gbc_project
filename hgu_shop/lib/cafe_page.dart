@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hgu_shop/review/upload_page.dart';
 import 'cafe_location_page.dart';
 import "package:url_launcher/url_launcher.dart";
 
@@ -96,7 +97,7 @@ class CScreen extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           _buildImageSection(idx),
-          _buildBotton(idx),
+          _buildBotton(idx, Cafe),
           _buildTimeSetting(),
           _buildTime(idx),
           _buildBenefitSetting(),
@@ -123,7 +124,7 @@ _buildImageSection(int idx){
   );//Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
 }
 
-_buildBotton(int idx){
+_buildBotton(int idx, String cafe){
   return Container(
       color: Colors.white,
       child: StreamBuilder(
@@ -171,7 +172,7 @@ _buildBotton(int idx){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => EmptyPage()),
+                        MaterialPageRoute(builder: (context) => UploadPage(name: cafe)),
                       );
                     },
                   ),
