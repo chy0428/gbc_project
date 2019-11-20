@@ -26,8 +26,6 @@ class _Cafe_Store_LocationPageState extends State<Cafe_Store_LocationPage> {
   final double longitud;
 
   _Cafe_Store_LocationPageState(this.idx, this.latitude, this.longitud);
-//  double latitude = 36.055427 ;
-//  double longitud = 129.363059;
 
   @override
   void initState(){

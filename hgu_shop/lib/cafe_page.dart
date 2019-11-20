@@ -82,6 +82,10 @@ class CScreen extends StatelessWidget {
     // Use the Todo to create the UI.
     return Scaffold(
       appBar: AppBar(
+          leading: BackButton(
+            color: Colors.black,
+          ),
+          backgroundColor: Colors.white,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

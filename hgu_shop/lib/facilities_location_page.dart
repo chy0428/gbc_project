@@ -5,7 +5,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/basic.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-// ignore: camel_case_types
+// 이건 편의시설 지도!!!
 class Facil_Store_LocationPage extends StatefulWidget {
   final int idx;
   final double latitude;
@@ -14,10 +14,9 @@ class Facil_Store_LocationPage extends StatefulWidget {
   const Facil_Store_LocationPage({Key key, this.idx, this.latitude, this.longitud}) : super(key: key);
 
   @override
-  _Facil_Store_LocationPageState createState() => _Facil_Store_LocationPageState(idx,latitude,longitud);
+  _Facil_Store_LocationPageState createState() => _Facil_Store_LocationPageState(idx, latitude, longitud);
 }
 
-// ignore: camel_case_types
 class _Facil_Store_LocationPageState extends State<Facil_Store_LocationPage> {
   List<Marker> allMarkers=[];
   final int idx;
@@ -25,13 +24,6 @@ class _Facil_Store_LocationPageState extends State<Facil_Store_LocationPage> {
   final double longitud;
 
   _Facil_Store_LocationPageState(this.idx, this.latitude, this.longitud);
-
-
-//  double latitude = 36.055427 ;
-//  double longitud = 129.363059;
-
-
-
 
 
   @override

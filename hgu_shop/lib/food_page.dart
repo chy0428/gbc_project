@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hgu_shop/review/UploadPhoto_page.dart';
 import 'package:hgu_shop/review/upload_page.dart';
 import 'location_page.dart';
 import "package:url_launcher/url_launcher.dart";
@@ -26,8 +25,8 @@ class FoodScreen extends StatelessWidget {
     '논스탠다드',
     '달인의 찜닭',
     '호식이 두마리 치킨',
-    '맛찬들 왕소금 구이',  ];
-
+    '맛찬들 왕소금 구이',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,6 @@ class FoodScreen extends StatelessWidget {
                   Icon(Icons.restaurant),
                   Text('         '),
                   Container(
-//                      width: 280.0,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -71,6 +69,9 @@ class FoodScreen extends StatelessWidget {
                   builder: (context) => Screen(idx: index, food: Food[index]),
                 ),
               );
+//              FavoriteWidget(idx: index, food: Food[index]);
+              print("Test1");
+              print(index);
             },
           );
         },
@@ -82,34 +83,35 @@ class FoodScreen extends StatelessWidget {
 
 
 
-
 class Screen extends StatelessWidget {
-  // Declare a field that holds the Todo.
   final int idx;
   final String food;
 
   const Screen({Key key, this.idx, this.food}) : super(key: key);
-
-  // In the constructor, require a Todo.
-
-
+//test(){
+//  print("???");
+//  print(idx);
+//}
   @override
   Widget build(BuildContext context) {
-    // Use the Todo to create the UI.
     return Scaffold(
       appBar: AppBar(
+          leading: BackButton(
+            color: Colors.black,
+          ),
+          backgroundColor: Colors.white,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(food,
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
-              FavoriteWidget(),
+              FavoriteWidget(idx: idx, food: food[idx]),
             ],
           )
-
       ),
       backgroundColor: Colors.white,
+
       body: ListView(
         children: <Widget>[
           _buildImageSection(idx),
@@ -118,12 +120,12 @@ class Screen extends StatelessWidget {
           _buildTime(idx),
           _buildBenefitSetting(),
           _buildBenefit(idx)
+
         ],
       ),
     );
   }
 }
-
 
 _buildImageSection(int idx){
   return Container(
@@ -133,11 +135,10 @@ _buildImageSection(int idx){
             if(!snapshot.hasData) return Text('Loading data...');
             return Column(children: <Widget>[
               Image.network(snapshot.data.documents[idx]['photo2'])
-            ],
-            );
+            ],);
           }
       )
-  );//Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
+  );
 }
 
 _buildBotton(int idx, String food){
@@ -148,13 +149,11 @@ _buildBotton(int idx, String food){
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text('Loading data...');
             return Row(
-              //crossAxisAlignment: CrossAxisAlignment.baseline,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: FlatButton(
-                    //materialTapTargetSize: ,
                     child: _buildButtonItems(Icons.call, 'CALL'),
                     color: Colors.white,
                     onPressed: () {
@@ -173,11 +172,11 @@ _buildBotton(int idx, String food){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Food_Store_LocationPage(idx: idx, latitude: snapshot.data.documents[idx]['latitude'], longitud: snapshot.data.documents[idx]['longitude'])),
-                        //MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
+                        MaterialPageRoute(builder: (context) =>
+                            Food_Store_LocationPage(idx: idx, latitude: snapshot.data.documents[idx]['latitude'],
+                            longitud: snapshot.data.documents[idx]['longitude'])),
                       );
                     },
-
                   ),
                 ),
                 Padding(
@@ -220,7 +219,6 @@ _showDialog(int idx) {
                 style: TextStyle(
                     color: Colors.grey[500]
                 ),),
-              // 주석으로 막아놓은 actions 매개변수도 확인해 볼 것.
               actions: <Widget>[
                 FlatButton(child: Text('확인', style: TextStyle(color:
                 Colors.pinkAccent)), onPressed: _callPhone),
@@ -271,6 +269,7 @@ _buildTime(int idx){
                 child: Text(snapshot.data.documents[idx]['''영업시간'''],
                   softWrap: true,
                   style: TextStyle(
+
                       color: Colors.grey[500]
                   ),)
             );
@@ -299,7 +298,6 @@ _buildBenefit(int idx){
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text('Loading data...');
             return
-
               Container(
                 margin: EdgeInsets.all(16),
                 child: Text(
@@ -310,48 +308,87 @@ _buildBenefit(int idx){
       ));
 }
 
-
-class EmptyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("EmptyPage"),
-      ),
-    );
-  }
-}
-
 class FavoriteWidget extends StatefulWidget {
+  final int idx;
+  final String food;
+  const FavoriteWidget({Key key, this.idx, this.food}) : super(key: key);
+
   @override
-  _FavoriteWidgetState createState() => _FavoriteWidgetState();
+  _FavoriteWidgetState createState() => _FavoriteWidgetState(idx, food);
 }
 
 class _FavoriteWidgetState extends State<FavoriteWidget> {
   bool _isFavorited = false;
+  final int idx;
+  final String food;
+
+  _FavoriteWidgetState(this.idx, this.food);
+
+  var tmp;
+  get child => null;
+
 
   void _toggleFavorite() {
     setState(() {
       if(_isFavorited) {
+        print("Test2");
+        print(idx);
         _isFavorited = false;
-      } else {
-        _isFavorited = true;
-      }
+        //해당 페이지의 인덱스 저장
+        return{
+          child: StreamBuilder(
+                stream: Firestore.instance.collection('요식업').snapshots(),
+                builder: (context, snapshot) {
+                  return tmp = snapshot.data.documents[idx]['foodID'];
+                  },)
+        };
+        } else {
+          _isFavorited = true;
+          return 0;
+        }
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container (
-      padding: EdgeInsets.all(0.0),
-      child: IconButton(
-        icon: (_isFavorited
-            ? Icon(Icons.favorite)
-            : Icon(Icons.favorite_border, color: Colors.grey[700],)),
-        color: Colors.red[500],
-        onPressed: _toggleFavorite,
-      ),
-    );
-  }
+        @override
+        Widget build(BuildContext context) {
+
+      return Container (
+        padding: EdgeInsets.all(0.0),
+        child: IconButton(
+          icon: (_isFavorited ? Icon(Icons.favorite)
+              : Icon(Icons.favorite_border, color: Colors.grey[700],)), color: Colors.red[500],
+          onPressed: _toggleFavorite,
+
+        ),
+
+      );
+
+//      child FutureBuilder(
+//          future: _repository.isSaved(item),
+//          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+//            switch (snapshot.connectionState) {
+//              case ConnectionState.waiting:
+//              case ConnectionState.none:
+//              case ConnectionState.active:
+//                return Icon(Icons.favorite_border);
+//              case ConnectionState.done:
+//                return GestureDetector(
+//                  child: Icon(
+//                      snapshot.data ? Icons.favorite : Icons.favorite_border,
+//                      color: snapshot.data ? Colors.red : null),
+//                  onTap: () async{
+//                    if (snapshot.data) {
+//                      await _repository.removeItem(item);
+//                    } else {
+//                      await _repository.saveItem(item);
+//                    }
+//                    setState(() {
+//
+//                    });
+//                  },
+//                );
+//            }
+//          });
+
+    }
 }

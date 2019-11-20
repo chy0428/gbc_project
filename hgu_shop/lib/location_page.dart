@@ -27,7 +27,6 @@ class _Food_Store_LocationPageState extends State<Food_Store_LocationPage> {
   _Food_Store_LocationPageState(this.idx, this.latitude, this.longitud);
 
 
-
   @override
   void initState(){
     super.initState();

@@ -448,16 +448,22 @@ class FavoriteWidget extends StatefulWidget {
 
 class _FavoriteWidgetState extends State<FavoriteWidget> {
   bool _isFavorited = true;
+  var index;
+
+  get child => null;
 
   void _toggleFavorite() {
     setState(() {
       if (_isFavorited) {
         _isFavorited = false;
-      } else {
+
+      }
+      else {
         _isFavorited = true;
       }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -472,6 +478,4 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
       ),
     );
   }
-
-
 }

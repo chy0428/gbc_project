@@ -91,6 +91,10 @@ class FScreen extends StatelessWidget {
     // Use the Todo to create the UI.
     return Scaffold(
       appBar: AppBar(
+          leading: BackButton(
+            color: Colors.black,
+          ),ls
+          backgroundColor: Colors.white,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -396,14 +400,6 @@ _buildButtonItem(IconData icon, MaterialColor color, String name){
     ],
   );
 }
-
-_buildTextSection(){
-  return Container(
-    margin: EdgeInsets.all(16),
-    //child:
-  );
-}
-
 
 class EmptyPage extends StatelessWidget {
   @override

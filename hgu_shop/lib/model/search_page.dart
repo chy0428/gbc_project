@@ -125,7 +125,6 @@ class _SearchPageState extends State<SearchPage> {
                             contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
                             onTap: (){
                               var i = 0;
-                              var j = 0;
                               var _index = 0;
                               var check = 0;
                               var newindex = [ ];
