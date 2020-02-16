@@ -1,7 +1,10 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hgu_shop/review/UploadPhoto_page.dart';
+import 'package:hgu_shop/review/posts.dart';
 import 'package:hgu_shop/review/upload_page.dart';
 
 class MyPage extends StatelessWidget {
@@ -59,8 +62,8 @@ class MyPage extends StatelessWidget {
                                   child: Image.asset('images/review.png'),
                                   onTap: (){
                                     Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => UploadPage())
-                                  );
+                                        MaterialPageRoute(builder: (context) => MyRiviewPage(user))
+                                    );
                                   },
                                 )
                               //Text('My review', style: TextStyle(color: Colors.white, fontFamily: 'Montserrat'),),
@@ -121,5 +124,148 @@ class ReviewList extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
         ));
+  }
+}
+
+
+
+
+class MyRiviewPage extends StatefulWidget {
+  final FirebaseUser user;
+  MyRiviewPage(this.user);
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+
+
+  @override
+  _MyRiviewPageState createState() => _MyRiviewPageState(user);
+
+}
+
+
+class _MyRiviewPageState extends State<MyRiviewPage> {
+  List<Posts> postMessages = List();
+  Posts posts;
+
+  final FirebaseDatabase database = FirebaseDatabase.instance;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final FirebaseUser user;
+
+  DatabaseReference databaseReference;
+
+  _MyRiviewPageState(this.user);
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    posts = Posts("" ,"", "");
+    databaseReference = database.reference().child("post_board");
+    databaseReference.onChildAdded.listen(_onEntryAdded);
+    databaseReference.onChildChanged.listen(_onEntryChanged);
+    databaseReference.onChildRemoved.listen(_onEntryRemoved);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('MY리뷰', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+      ),
+
+      body: Column(
+        children: <Widget>[
+          Padding(padding: EdgeInsets.only(top: 5, bottom: 10)),
+
+          Flexible(
+            child: FirebaseAnimatedList(
+                query: databaseReference,
+                itemBuilder: (_, DataSnapshot snapshot,
+                    Animation<double> animation, int index) {
+                  if(user.displayName != postMessages[index].subject) return Row();
+                  return   Container(
+                    decoration: BoxDecoration(color: Colors.white,
+                      border: Border.all(color: Colors.grey[200]),),
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          title: Text(postMessages[index].name, style: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,)
+                          ),
+                          subtitle: Container(
+                              margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                              child: Text(postMessages[index].body,
+                                softWrap: true,
+                                style: TextStyle(
+                                    color: Colors.grey[500]
+                                ),)
+                          ),
+                          trailing: InkWell(
+                            child: Text('삭제', style: TextStyle(color: Colors.pink, fontSize: 14)),
+                            onTap: () =>  _removePostForm(),
+                          ),
+                        )
+
+                      ],
+                    ),
+                  );
+                }),
+          ),
+
+        ],
+      ),
+    );
+  }
+
+
+  void _onEntryAdded(Event event) {
+    setState(() {
+      postMessages.add(Posts.fromSnapshot(event.snapshot));
+    });
+  }
+
+  void _onEntryRemoved(Event event) {
+    setState(() {
+      postMessages.remove(Posts.fromSnapshot(event.snapshot));
+    });
+  }
+
+  void _submitPostForm() {
+    final FormState state = formKey.currentState;
+
+    if (state.validate()) {
+      state.save();
+      state.reset();
+
+      databaseReference.push().set(posts.toJson());
+    }
+  }
+
+  void _removePostForm() {
+    final FormState state = formKey.currentState;
+
+//    if (state.validate()) {
+//      state.save();
+//      state.reset();
+
+    databaseReference.child ('1').remove();
+  }
+
+  void _onEntryChanged(Event event) {
+    var oldData = postMessages.singleWhere((entry) {
+      return entry.key == event.snapshot.key;
+    });
+
+    setState(() {
+      postMessages[postMessages.indexOf(oldData)] =
+          Posts.fromSnapshot(event.snapshot);
+    });
   }
 }

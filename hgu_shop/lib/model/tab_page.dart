@@ -21,9 +21,9 @@ class _TabPageState extends State<TabPage> {
   void initState(){
     super.initState();
     _pages = [
-      HomePage(),
-      SearchPage(),
-      FavoritePage(),
+      HomePage(widget.user),
+      SearchPage(widget.user),
+      FavoritePage(widget.user),
       MyPage(widget.user),
     ];
   }
@@ -38,16 +38,16 @@ class _TabPageState extends State<TabPage> {
 //      ),
       body: Center(child: _pages[_selectedIndex]),
       bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Colors.pinkAccent,
-        onTap: _onItemTapped,
-        currentIndex: _selectedIndex,
-        type: BottomNavigationBarType.fixed,
+          fixedColor: Colors.pinkAccent,
+          onTap: _onItemTapped,
+          currentIndex: _selectedIndex,
+          type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-        BottomNavigationBarItem(icon: Icon(Icons.search), title: Text('Search')),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), title: Text('favorite')),
-        BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('My page')),
-    ]),
+            BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+            BottomNavigationBarItem(icon: Icon(Icons.search), title: Text('Search')),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite), title: Text('favorite')),
+            BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('My page')),
+          ]),
     );
   }
 

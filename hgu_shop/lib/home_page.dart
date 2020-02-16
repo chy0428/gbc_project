@@ -1,10 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'
     show AppBar, BuildContext, Center, Colors, Column, EdgeInsets, FontWeight, Image, InkWell, MainAxisAlignment, MaterialPageRoute, Navigator, Padding, RaisedButton, Row, Scaffold, State, StatefulWidget, StatelessWidget, Text, TextStyle, Widget;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'food_page.dart' show FoodScreen;
 import 'cafe_page.dart' show CafeScreen;
 import 'facilities_page.dart';
 
 class HomePage extends StatelessWidget {
+  final FirebaseUser user;
+  HomePage(this.user);
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,17 +22,21 @@ class HomePage extends StatelessWidget {
             ],
           )
       ),
-      body: Options(),
+      body: Options(user),
     );
   }
 }
 
 class Options extends StatefulWidget {
+  final FirebaseUser user;
+  Options(this.user);
   @override
-  OptionsState createState() => new OptionsState();
+  OptionsState createState() => new OptionsState(user);
 }
 
 class OptionsState extends State<Options> {
+  final FirebaseUser user;
+  OptionsState(this.user);
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -42,7 +52,7 @@ class OptionsState extends State<Options> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FoodScreen() ),
+                    MaterialPageRoute(builder: (context) => FoodScreen(user) ),
                   );
                 },
               ),
@@ -54,7 +64,7 @@ class OptionsState extends State<Options> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CafeScreen() ),
+                    MaterialPageRoute(builder: (context) => CafeScreen(user) ),
                   );
                 },
 
@@ -67,7 +77,7 @@ class OptionsState extends State<Options> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FacilitiesScreen() ),
+                    MaterialPageRoute(builder: (context) => FacilitiesScreen(user) ),
                   );
                 },
               ),

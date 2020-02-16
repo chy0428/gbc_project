@@ -6,11 +6,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hgu_shop/review/posts.dart';
 
 
+
 class UploadPage extends StatefulWidget {
   final String name;
-  const UploadPage({Key key, this.name}) : super(key: key);
+  final FirebaseUser user;
+  UploadPage(this.name, this.user);
 
-  FirebaseUser get user => null;
 
   @override
   _UploadPageState createState() => _UploadPageState(user, name);
@@ -42,60 +43,7 @@ class _UploadPageState extends State<UploadPage> {
     databaseReference.onChildAdded.listen(_onEntryAdded);
     databaseReference.onChildChanged.listen(_onEntryChanged);
   }
-  Widget PostsUI(String image, String description, String date, String time) {
-    return new Card(
-        elevation: 10.0,
-        margin: EdgeInsets.all(15.0),
 
-        child: Container(
-          padding: EdgeInsets.all(14.0),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                children: <Widget>[
-                  Text(
-                    date,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .subtitle,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    time,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .subtitle,
-                    textAlign: TextAlign.center,
-                  )
-                ],
-              ),
-
-              SizedBox(height: 10.0,),
-
-              new Image.network(image, fit: BoxFit.cover,),
-
-              SizedBox(height: 10.0,),
-
-              Text(
-                description,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .subhead,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        )
-    );
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +59,7 @@ class _UploadPageState extends State<UploadPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                color: Colors.white,
+                //color: Colors.white,
                 margin: EdgeInsets.fromLTRB(30, 0, 0, 15),
                 child:  Text(name, style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
               ),
@@ -132,18 +80,45 @@ class _UploadPageState extends State<UploadPage> {
 
 
 //          Padding(padding: EdgeInsets.only(top: 20, bottom: 10)),
+
+
           Flexible(
             child: FirebaseAnimatedList(
                 query: databaseReference,
                 itemBuilder: (_, DataSnapshot snapshot,
                     Animation<double> animation, int index) {
-                  return Card(
-                    child: ListTile(
-                      leading: IconButton(
-                        icon: Icon(Icons.message),
-                      ),
-                      title: Text(postMessages[index].subject),
-                      subtitle: Text(postMessages[index].body),
+                  if(name != postMessages[index].name) return Row();
+                  return Container(
+                    decoration: BoxDecoration(color: Colors.white,
+                      border: Border.all(color: Colors.grey[200]),),
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          leading: Container(
+                              width: 40.0,
+                              height: 40.0,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(image: NetworkImage(user.photoUrl), fit: BoxFit.cover),
+                                borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                              )),
+                          title: Text(postMessages[index].subject, style: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,)
+                          ),
+                          subtitle: Container(
+                              margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                              child: Text(postMessages[index].body,
+                                softWrap: true,
+                                style: TextStyle(
+                                    color: Colors.grey[500]
+                                ),)
+                          ),
+                        )
+
+                      ],
                     ),
                   );
                 }),
@@ -185,6 +160,7 @@ class _UploadPageState extends State<UploadPage> {
 
 
 class ReviewPage extends StatefulWidget {
+
   final String name;
   final FirebaseUser user;
 
@@ -205,65 +181,10 @@ class _ReviewPageState extends State<ReviewPage> {
   final FirebaseUser user;
   final String name;
 
+
   DatabaseReference databaseReference;
 
   _ReviewPageState(this.user, this.name);
-
-  Widget PostsUI(String image, String description, String date, String time) {
-    return new Card(
-        elevation: 10.0,
-        margin: EdgeInsets.all(15.0),
-
-        child: Container(
-          padding: EdgeInsets.all(14.0),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                children: <Widget>[
-                  Text(
-                    date,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .subtitle,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    time,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .subtitle,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 10.0,),
-
-              new Image.network(image, fit: BoxFit.cover,),
-
-              SizedBox(height: 10.0,),
-
-              Text(
-                description,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .subhead,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        )
-    );
-  }
-
 
   @override
   void initState() {
@@ -273,8 +194,8 @@ class _ReviewPageState extends State<ReviewPage> {
     databaseReference = database.reference().child("post_board");
     databaseReference.onChildAdded.listen(_onEntryAdded);
     databaseReference.onChildChanged.listen(_onEntryChanged);
-//    posts.name = name;
-//    posts.subject = user.displayName;
+    posts.name = name;
+    posts.subject = user.displayName;
   }
 
 
@@ -290,7 +211,6 @@ class _ReviewPageState extends State<ReviewPage> {
 //                  onTap: () => UploadPage(name: name),
 //                ),
               Text('리뷰 작성', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-              // Text(user.displayName, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               InkWell(
                 child: Text('확인', style: TextStyle(color: Colors.pink, fontSize: 14)),
                 onTap: () =>  _submitPostForm(),
@@ -337,7 +257,7 @@ class _ReviewPageState extends State<ReviewPage> {
 
   void _onEntryAdded(Event event) {
     posts.name = name;
-    posts.subject = user.displayName;
+
     setState(() {
       postMessages.add(Posts.fromSnapshot(event.snapshot));
     });
@@ -366,4 +286,19 @@ class _ReviewPageState extends State<ReviewPage> {
           Posts.fromSnapshot(event.snapshot);
     });
   }
+
 }
+
+//                    Card(
+//                    child: ListTile(
+//                      leading: Container(
+//                          width: 30.0,
+//                          height: 30.0,
+//                          decoration: BoxDecoration(
+//                              image: DecorationImage(image: NetworkImage(user.photoUrl), fit: BoxFit.cover),
+//                              borderRadius: BorderRadius.all(Radius.circular(30.0)),
+//                              )),
+//                      title: Text(postMessages[index].subject),
+//                      subtitle: Text(postMessages[index].body),
+//                    ),
+//                  );

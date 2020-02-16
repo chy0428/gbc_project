@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,8 +27,11 @@ class FacilitiesScreen extends StatelessWidget {
     '중앙콘텐트안경',
     '극동렌트카',
     'Only U gym',
-    '메디칼닥터스 몸편한재활의학과',
+    '메디칼닥터스',
   ];
+
+  final FirebaseUser user;
+  FacilitiesScreen(this.user);
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +72,7 @@ class FacilitiesScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FScreen(idx: index, facility: facility[index]),
+                  builder: (context) => FScreen(idx: index, facility: facility[index],user: user),
                 ),
               );
             },
@@ -84,7 +88,9 @@ class FScreen extends StatelessWidget {
   final int idx;
   final String facility;
   // In the constructor, require a Todo.
-  FScreen({Key key, @required this.idx, this.facility}) : super(key: key);
+  final FirebaseUser user;
+
+  FScreen({Key key, @required this.idx, this.facility, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +99,7 @@ class FScreen extends StatelessWidget {
       appBar: AppBar(
           leading: BackButton(
             color: Colors.black,
-          ),ls
+          ),
           backgroundColor: Colors.white,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,11 +116,13 @@ class FScreen extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           _buildImageSection(idx),
-          _buildBotton(idx, facility),
+          _buildBotton(idx, facility, user),
           _buildTimeSetting(),
           _buildTime(idx),
           _buildBenefitSetting(),
-          _buildBenefit(idx)
+          _buildBenefit(idx),
+          _buildMenuSetting(),
+          _buildMenu(idx),
         ],
       ),
     );
@@ -137,7 +145,7 @@ _buildImageSection(int idx){
   );//Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
 }
 
-_buildBotton(int idx, String facility){
+_buildBotton(int idx, String facility, FirebaseUser user){
   return Container(
       color: Colors.white,
       child: StreamBuilder(
@@ -185,7 +193,7 @@ _buildBotton(int idx, String facility){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => UploadPage(name: facility)),
+                        MaterialPageRoute(builder: (context) => UploadPage(facility, user)),
                       );
                     },
                   ),
@@ -400,6 +408,61 @@ _buildButtonItem(IconData icon, MaterialColor color, String name){
     ],
   );
 }
+
+_buildMenuSetting(){
+  return Container(
+    color: Colors.white,
+    margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
+    child: Text('가격', style: TextStyle(
+      color: Colors.grey[800],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,)
+    ),
+  );
+}
+
+_buildMenu(int idx){
+  return Container(
+      color: Colors.white,
+      margin: EdgeInsets.fromLTRB(44, 0, 16, 0),
+      child: StreamBuilder(
+          stream: Firestore.instance.collection('편의 시설').snapshots(),
+          builder: (context, snapshot) {
+            var i = 0;
+            List<String> str = List();
+            for(i = 0; i<snapshot.data.documents[idx]['items'].length; i++) {
+              str.add(snapshot.data.documents[idx]['items'][i]);
+            }
+            if (!snapshot.hasData) return Text('Loading data...');
+            return
+              Container(
+                  margin: EdgeInsets.all(1),
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.documents[idx]['items'].length,
+                      itemBuilder: (context, index){
+
+                        return Container(
+                          margin: EdgeInsets.all(1),
+                          child: Text('${str[index]}',
+                            softWrap: true,
+                            style: TextStyle(color: Colors.grey[500]),
+                          ),
+                        );
+                      })
+              );
+          }
+      ));
+}
+
+
+_buildTextSection(){
+  return Container(
+    margin: EdgeInsets.all(16),
+    //child:
+  );
+}
+
 
 class EmptyPage extends StatelessWidget {
   @override

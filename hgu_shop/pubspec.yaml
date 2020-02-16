@@ -29,6 +29,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons:
+
+flutter_icons:
+  android: true
+
 
 flutter:
   uses-material-design: true

@@ -1,481 +1,213 @@
-// 모캄보 본카츠야 디자인 짐
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-//import 'favorite_save_page.dart';
-import 'cafe_page.dart';
-import 'food_page.dart';
-import 'facilities_page.dart';
-import 'location_page.dart';
+import 'package:hgu_shop/food_page.dart';
+import 'package:hgu_shop/model//note.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:hgu_shop/cafe_page.dart';
+import 'package:hgu_shop/facilities_page.dart';
+import 'package:hgu_shop/food_page.dart';
+
+
 class FavoritePage extends StatefulWidget {
 
+  final FirebaseUser user;
+  FavoritePage(this.user);
+
   @override
-  _FavoritePageState createState() => _FavoritePageState();
+  _FavoritePageState createState() => _FavoritePageState(user);
 }
+
 
 class _FavoritePageState extends State<FavoritePage> {
-  //final List<> _suggestions = <WordPair>[];
-  final Set<String> _saved = Set<String>();
-  final List<String> Stores = [
-    '모캄보 ',
+//  @override
+//  Widget build(BuildContext context) {
+//    return StreamBuilder<QuerySnapshot>(
+//      stream: Firestore.instance.collection('user').snapshots(),
+//      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//        if (snapshot.hasError)
+//          return new Text('Error: ${snapshot.error}');
+//        switch (snapshot.connectionState) {
+//          case ConnectionState.waiting: return new Text('Loading...');
+//          default:
+//            return new ListView(
+//              children: snapshot.data.documents.map((DocumentSnapshot document) {
+//                return new ListTile(
+//                  title: new Text(document['favorite']),
+//                );
+//              }).toList(),
+//            );
+//        }
+//      },
+//    );
+//  }
+  final List<String> Stores = <String> [
     '본카츠야',
-    '디자인짐'
-  ] as List
-  ;
-  @override
-  Widget build(BuildContext context) {
+    '서가앤쿡',
+    '모범떡볶이',
+    '라라코스트',
+    '오랑 발리',
+    '도르리 식당',
+    '동궁 찜닭',
+    '토시래',
+    '라멘 베라보', // 8
+    '9월애',
+    '일봉 족발',
+    '쌀통닭',
+    '신전 떡볶이',
+    '논스탠다드',
+    '달인의 찜닭',
+    '호식이 두마리 치킨',
+    '맛찬들 왕소금 구이',
+    '투썸 플레이스',
+    '달콤커피 장성점',
+    '카페콩',
+    '디저트39',
+    '양덕동 마카롱',
+    '잇브레드',
+    '클래식 북스',
+    '모캄보',
+    '엣지브라운', // 25
+    '미즈앤맘 산부인과',
+    '포항온천',
+    '디자인짐',
+    '라안요가 필라테스',
+    '양덕광천수온천',
+    '클푸',
+    '다비치 안경',
+    'ABC볼링장',
+    '알파 문구 양덕',
+    '밝은성모안과',
+    '만화라떼 24시',
+    '바디 팩토리',
+    '이가자 헤어비스',
+    '바이크 엣지',
+    '중앙콘택트안경점',
+    '극동렌트카',
+    'only u gym',
+    '메디컬 닥터스',
+  ];
 
-    return Scaffold(
-      appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset('images/logo.png', width: 80),
-            ],
-          )
-      ),
-      body: _buildList(),
-    );
-  }
+  List<Note> _notes = List<Note>();
 
-  Widget _buildList() {
-    return ListView.builder(
-        itemCount: Stores.length,
-        itemBuilder: (context, index) {
-
-          var realIndex = index ;
-
-          return _buildRow(Stores.toList()[realIndex]);
-        });
-  }
-
-  Widget _buildRow(String pair){
-    final bool alreadySaved = _saved.contains(pair);
-    int i = 0;
-
-    return ListTile(
-      title: Container(
-        // margin: EdgeInsets.fromLTRB(8, 9, 8, 9),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Icon(Icons.pets),
-              // Text('         '),
-              Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(pair.toString(), style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
-                      ),),
-                    ],
-
-                  )
-              ),
-              Text('                   '),
-              Icon(Icons.favorite, color: Colors.red[500],)
-            ],)
-      ),
-      onTap: (){
-        if(i == 0 ){
-          Navigator.push(context,
-            MaterialPageRoute(builder: (context) =>
-                CCScreen(idx: 7, food: '모캄보')),
-          );
-        }
-        // 디테일 페이지로 이동
-      },
-      /*onTap: (){ // 터치 기능
-        setState(() { // 계속 셋팅
-          if(alreadySaved){
-            _saved.remove(pair);
-          }else{
-            _saved.add(pair);
-
-            print(_saved.toString()); // 저장되었는지 출력
-          }
-        });
-      },*/
-    );
-  }
-}
+  List <Note> _notesForDisplay = List<Note>();
+  final FirebaseUser user;
+  _FavoritePageState(this.user);
 
 
-class CCScreen extends StatelessWidget {
-  // Declare a field that holds the Todo.
-  final int idx;
-  final String food;
-  // In the constructor, require a Todo.
-  CCScreen({Key key, @required this.idx, this.food}) : super(key: key);
+  Future<List<Note>> fetchNotes() async {
+    var url = 'https://raw.githubusercontent.com/jiniljeil/Coding/master/note';
+    var response = await http.get(url);
 
-  @override
-  Widget build(BuildContext context) {
-    // Use the Todo to create the UI.
-    return Scaffold(
-      appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(food,
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-              ),
-              FavoriteWidget(),
-            ],
-          )
+    var notes = List<Note>();
 
-      ),
-      backgroundColor: Colors.white,
-      body: ListView(
-        children: <Widget>[
-          _buildImageSection(idx),
-          _buildBotton(idx),
-          _buildTimeSetting(),
-          _buildTime(idx),
-          _buildBenefitSetting(),
-          _buildBenefit(idx)
-        ],
-      ),
-    );
-  }
-}
-
-
-_buildImageSection(int idx){
-  return Container(
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
-          builder: (context, snapshot){
-            if(!snapshot.hasData) return Text('Loading data...');
-            return Column(children: <Widget>[
-              Image.network(snapshot.data.documents[idx]['photo2'])
-            ],
-            );
-          }
-      )
-  );//Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
-}
-
-_buildBotton(int idx){
-  return Container(
-      color: Colors.white,
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Text('Loading data...');
-            return Row(
-              //crossAxisAlignment: CrossAxisAlignment.baseline,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: FlatButton(
-                    //materialTapTargetSize: ,
-                    child: _buildButtonItems(Icons.call, 'CALL'),
-                    color: Colors.white,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => _showDialog(idx)),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: FlatButton(
-                    child:  _buildButtonItems(Icons.place, 'PLACE'),
-                    color: Colors.white,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Food_Store_LocationPage(idx: idx)),
-                        //MaterialPageRoute(builder: (context) => Store_LocationPage(idx: idx)),
-                      );
-                    },
-
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: FlatButton(
-                    child: _buildButtonItems(Icons.create, 'REVEIW'),
-                    color: Colors.white,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => EmptyPage()),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          })
-  );
-
-}
-
-_showDialog(int idx) {
-  return Container(
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
-          builder: (context, snapshot){
-            if(!snapshot.hasData) return Text('Loading data...');
-            _callPhone() async {
-              if (await canLaunch(snapshot.data.documents[idx]['''전화 번호'''])) {
-                await launch(snapshot.data.documents[idx]['''전화 번호''']);
-              } else {
-                throw 'Could not Call Phone';
-              }
-            }
-            return AlertDialog(
-              title: Text('전화연결'),
-              content: Text(snapshot.data.documents[idx]['''전화 번호'''],
-                softWrap: true,
-                style: TextStyle(
-                    color: Colors.grey[500]
-                ),),
-              // 주석으로 막아놓은 actions 매개변수도 확인해 볼 것.
-              actions: <Widget>[
-                FlatButton(child: Text('확인'), onPressed: _callPhone),
-                FlatButton(child: Text('취소'), onPressed: () => Navigator.pop(context)),
-              ],
-            );
-          }
-      )
-  );
-}
-
-
-_buildButtonItems(IconData icon, String name){
-  return Column(
-    children: <Widget>[
-      Icon(icon, color: Colors.grey[700],),
-      Text(name, style: TextStyle(
-        color: Colors.grey[700],
-      )
-      ),
-    ],
-  );
-}
-
-_buildTimeSetting(){
-  return Container(
-    color: Colors.white,
-    margin: EdgeInsets.fromLTRB(16, 8, 16, 0),
-    child: Text('영업시간', style: TextStyle(
-      color: Colors.grey[800],
-      fontSize: 13,
-      fontWeight: FontWeight.bold,)
-    ),
-  );
-}
-
-_buildTime(int idx){
-  return Container(
-      color: Colors.white,
-      margin: EdgeInsets.fromLTRB(32, 0, 16, 0),
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
-          builder: (context, snapshot){
-            if(!snapshot.hasData) return Text('Loading data...');
-            return Container(
-                margin: EdgeInsets.all(16),
-                child: Text(snapshot.data.documents[idx]['''영업시간'''],
-                  softWrap: true,
-                  style: TextStyle(
-                      color: Colors.grey[500]
-                  ),)
-            );
-          })
-  );
-}
-
-_buildBenefitSetting(){
-  return Container(
-    color: Colors.white,
-    margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
-    child: Text('HGU 혜택', style: TextStyle(
-      color: Colors.grey[800],
-      fontSize: 13,
-      fontWeight: FontWeight.bold,)
-    ),
-  );
-}
-
-_buildBenefit(int idx){
-  return Container(
-      color: Colors.white,
-      margin: EdgeInsets.fromLTRB(32, 0, 16, 0),
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Text('Loading data...');
-            return
-
-              Container(
-                margin: EdgeInsets.all(16),
-                child: Text(
-                  snapshot.data.documents[idx]['혜택'], style: TextStyle(
-                    color: Colors.grey[500]),
-                ),);
-          }
-      ));
-}
-
-_buildName(int idx){
-  return Container(
-      margin: EdgeInsets.all(16),
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
-          builder: (context, snapshot){
-            if(!snapshot.hasData) return Text('Loading data...');
-            return Text(snapshot.data.documents[idx]['''name'''],
-              softWrap: true,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize:24
-              ),);
-          }
-      ));
-
-}
-
-
-_buildTitleSection(int idx){
-  return Container(
-      margin: EdgeInsets.all(16),
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
-          builder: (context, snapshot){
-            if(!snapshot.hasData) return Text('Loading data...');
-
-            return Row(children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(snapshot.data.documents[idx]['''name'''],
-                    softWrap: true,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize:24
-                    ),),
-                  Row(
-                    children: <Widget>[
-                      Text('영업시간', style: TextStyle(
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,)),
-                      Text(snapshot.data.documents[idx]['''영업시간'''],
-
-                        softWrap: true,
-                        style: TextStyle(
-                            color: Colors.grey[500]
-                        ),),
-                    ],
-                  ),
-
-                  Row(
-                    children: <Widget>[
-                      Text('HGU 혜택', style: TextStyle(
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,)),
-                      Text(snapshot.data.documents[idx]['혜택'],style: TextStyle(
-                          color: Colors.grey[500]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-            );
-          }));
-}
-
-
-_buildButtonSection(int idx){
-  return Container(
-    margin: EdgeInsets.all(16),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-//        new GestureDetector(
-//        onTap: () => Navigator.push(_buildButtonItem(Icons.call, Colors.pink, 'CALL'),
-//            MaterialPageRoute(builder: (context) => Store_LocationPage())),
-
-        _buildButtonItem(Icons.call, Colors.pink, 'CALL'),
-        _buildButtonItem(Icons.place, Colors.pink, 'PLACE'),
-        _buildButtonItem(Icons.favorite_border, Colors.pink, 'LIKE'),
-      ],
-    ),
-  );
-}
-
-_buildButtonItem(IconData icon, MaterialColor color, String name){
-  return Column(
-    children: <Widget>[
-      Icon(icon, color: color,),
-      Text(name, style: TextStyle(color: color),),
-    ],
-  );
-}
-
-_buildTextSection(){
-  return Container(
-    margin: EdgeInsets.all(16),
-    //child:
-  );
-}
-
-
-class EmptyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("EmptyPage"),
-      ),
-    );
-  }
-}
-
-
-class FavoriteWidget extends StatefulWidget {
-  @override
-  _FavoriteWidgetState createState() => _FavoriteWidgetState();
-}
-
-class _FavoriteWidgetState extends State<FavoriteWidget> {
-  bool _isFavorited = true;
-  var index;
-
-  get child => null;
-
-  void _toggleFavorite() {
-    setState(() {
-      if (_isFavorited) {
-        _isFavorited = false;
-
+    if (response.statusCode == 200) {
+      var notesJson = json.decode(response.body);
+      for (var noteJson in notesJson) {
+        notes.add(Note.fromJson(noteJson));
       }
-      else {
-        _isFavorited = true;
-      }
+    }
+    return notes;
+  }
+
+  @override
+  void initState() {
+    fetchNotes().then((value) {
+      setState(() {
+        _notes.addAll(value);
+        _notesForDisplay = _notes;
+      });
     });
+    super.initState();
   }
 
+  String filter;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(0.0),
-      child: IconButton(
-        icon: (_isFavorited
-            ? Icon(Icons.favorite)
-            : Icon(Icons.favorite_border, color: Colors.grey[700],)),
-        color: Colors.red[500],
-        onPressed: _toggleFavorite,
+    return MaterialApp(
+      home: SafeArea(
+        child: Scaffold(
+            resizeToAvoidBottomPadding: false,
+            body: Container(
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(20.0),
+                    ),
+                    Image.asset('images/logo.png', width: 100),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _notesForDisplay.length,
+                        itemBuilder: (context, index){
+//                          return index == 0 ? _search() : _list(index-1);
+                          return ListTile(
+                            contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
+                            onTap: (){
+                              var i = 0;
+                              var _index = 0;
+                              var check = 0;
+                              var newindex = [ ];
+                              for(i = 0; i < 44; i++) {
+                                if (_notesForDisplay[index].title == Stores[i]) {
+                                  newindex.add(index);
+                                  check = i;
+                                  break;
+                                }
+                              }
+                              if(filter != ""){
+                                if(check <= 16){
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => Screen(user: user, idx: i, food: _notesForDisplay[index].title)));
+                                }
+                                else if(check > 16 && check<=25){
+                                  _index = check -17;
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => CScreen(user: user, idx: _index, Cafe: _notesForDisplay[index].title)));
+                                }
+                                else if(check > 25 && check < 44){
+                                  _index = check - 26;
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => FScreen(user: user, idx: _index, facility: _notesForDisplay[index].title)));
+                                }
+                              }
+                            },
+
+                            title: Text(
+                              '${_notesForDisplay[index].title}',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            leading: Icon(Icons.store),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+        ),
       ),
     );
+  }
+}
+
+class Note{
+  String title;
+
+  Note(this.title);
+
+  Note.fromJson(Map<String, dynamic> json){
+    title = json["title"];
   }
 }

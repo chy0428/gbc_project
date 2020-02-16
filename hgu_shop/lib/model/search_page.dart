@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'note.dart';
 import '../cafe_page.dart';
 import '../facilities_page.dart';
@@ -7,9 +9,14 @@ import '../food_page.dart';
 import 'package:http/http.dart' as http;
 
 class SearchPage extends StatefulWidget {
+  final FirebaseUser user;
+  SearchPage(this.user);
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _SearchPageState createState() => _SearchPageState(user);
 }
 
 class _SearchPageState extends State<SearchPage> {
@@ -64,6 +71,9 @@ class _SearchPageState extends State<SearchPage> {
   List<Note> _notes = List<Note>();
 
   List <Note> _notesForDisplay = List<Note>();
+  final FirebaseUser user;
+  _SearchPageState(this.user);
+
 
   Future<List<Note>> fetchNotes() async {
     var url = 'https://raw.githubusercontent.com/jiniljeil/Coding/master/note';
@@ -125,6 +135,7 @@ class _SearchPageState extends State<SearchPage> {
                             contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
                             onTap: (){
                               var i = 0;
+                              var j = 0;
                               var _index = 0;
                               var check = 0;
                               var newindex = [ ];
@@ -138,30 +149,30 @@ class _SearchPageState extends State<SearchPage> {
                               if(filter != ""){
                                 if(check <= 16){
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => Screen(idx: i, food: _notesForDisplay[index].title)));
+                                      MaterialPageRoute(builder: (context) => Screen(user: user, idx: i, food: _notesForDisplay[index].title)));
                                 }
                                 else if(check > 16 && check<=25){
                                   _index = check -17;
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => CScreen(idx: _index, Cafe: _notesForDisplay[index].title)));
+                                      MaterialPageRoute(builder: (context) => CScreen(user: user, idx: _index, Cafe: _notesForDisplay[index].title)));
                                 }
                                 else if(check > 25 && check < 44){
                                   _index = check - 26;
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => FScreen(idx: _index, facility: _notesForDisplay[index].title)));
+                                      MaterialPageRoute(builder: (context) => FScreen(user: user, idx: _index, facility: _notesForDisplay[index].title)));
                                 }
                               }else{ //검색안하고 page 이동
                                 if(check <= 16){
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => Screen(idx: i, food: _notesForDisplay[index].title)));
+                                      MaterialPageRoute(builder: (context) => Screen(user: user, idx: i, food: _notesForDisplay[index].title)));
                                 }else if(check > 16 && check<=25){
                                   _index = check -17;
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => CScreen(idx:_index, Cafe: _notesForDisplay[index].title)));
+                                      MaterialPageRoute(builder: (context) => CScreen(user: user, idx:_index, Cafe: _notesForDisplay[index].title)));
                                 }else{
                                   _index = check - 26;
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => FScreen(idx:_index, facility: _notesForDisplay[index].title)));
+                                      MaterialPageRoute(builder: (context) => FScreen(user: user, idx:_index, facility: _notesForDisplay[index].title)));
                                 }
                               }
                             },
@@ -189,29 +200,58 @@ class _SearchPageState extends State<SearchPage> {
 
   _search(){
     return Padding(
-      padding: EdgeInsets.only(top: 8.0, left: 30.0, bottom: 8.0, right: 30.0),
-      child: TextField(
-        decoration: InputDecoration(
-            labelText: "Search",
-            hintText: "Search",
-            prefixIcon: Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25.0)),
-            )
-        ),
-        onChanged: (text){
-          text = text.toLowerCase();
-          filter = text;
-          setState(() {
-            _notesForDisplay = _notes.where((note){
-              var notetitle = note.title.toLowerCase();
-              return notetitle.contains(text);
-            }).toList();
-          });
-        },
-      ),
+        padding: EdgeInsets.only(top: 8.0, left: 30.0, bottom: 8.0, right: 30.0),
+        child: Theme(
+          data: ThemeData(
+              primaryColor: Colors.pink
+          ),
+          child: TextField(
+            decoration: InputDecoration(
+              labelText: "Search",
+              hintText: "Search",
+              prefixIcon: Icon(Icons.search , color: Colors.pink,),
+
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  borderSide: BorderSide(color: Colors.pink)
+              ),
+
+            ),
+            onChanged: (text){
+              text = text.toLowerCase();
+              filter = text;
+              setState(() {
+                _notesForDisplay = _notes.where((note){
+                  var notetitle = note.title.toLowerCase();
+                  return notetitle.contains(text);
+                }).toList();
+              });
+            },
+          ),
+        )
     );
   }
+
+//  _list(index) {
+//    return Card(
+//    child:Padding(
+//        padding: EdgeInsets.all(8.0),
+//        child: Column(
+//          crossAxisAlignment: CrossAxisAlignment.start,
+//          children: <Widget>[
+//            Text(
+//              _notesForDisplay[index].title,
+//              style: TextStyle(
+//                fontSize: 15,
+//                fontWeight: FontWeight.bold
+//              ),
+//            )
+//          ],
+//        ),
+//      ),
+//    );
+//  }
+
 }
 
 
@@ -226,5 +266,30 @@ class Photo extends StatelessWidget {
           fit: BoxFit.cover
       ),
     );
+
   }
+//  @override
+////  Widget build(BuildContext context) {
+////    return Column(children: <Widget>[
+////      Row(children: <Widget>[
+////        makeImage(BoxFit.fill),
+////        makeImage(BoxFit.fill),
+////      ]),
+////      Row(children: <Widget>[
+////        makeImage(BoxFit.fill),
+////        makeImage(BoxFit.fill),
+////      ]),
+////      Row(children: <Widget>[
+////        makeImage(BoxFit.fill),
+////        makeImage(BoxFit.fill),
+////      ]),
+////    ]);
 }
+
+//  Widget makeImage(BoxFit option) {
+//    return Container(
+//      child: Image.asset('images/photo.jpeg', width: , height: 150, fit: option),
+//      padding: EdgeInsets.only(left: 2, right: 2, bottom: 1),
+//    );
+//  }
+//}

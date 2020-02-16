@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hgu_shop/review/posts.dart';
 import 'package:hgu_shop/review/upload_page.dart';
 import 'cafe_location_page.dart';
 import "package:url_launcher/url_launcher.dart";
@@ -19,6 +22,8 @@ class CafeScreen extends StatelessWidget {
     '모캄보',
     '엣지브라운',
   ];
+  final FirebaseUser user;
+  CafeScreen(this.user);
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +64,7 @@ class CafeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CScreen(idx: index, Cafe: Cafe[index]),
+                  builder: (context) => CScreen(idx: index, Cafe: Cafe[index],user: user),
                 ),
               );
             },
@@ -75,7 +80,9 @@ class CScreen extends StatelessWidget {
   final int idx;
   final String Cafe;
   // In the constructor, require a Todo.
-  CScreen({Key key, @required this.idx, this.Cafe}) : super(key: key);
+  final FirebaseUser user;
+  const CScreen({Key key, this.idx, this.Cafe, this.user}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +108,13 @@ class CScreen extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           _buildImageSection(idx),
-          _buildBotton(idx, Cafe),
+          _buildBotton(idx, Cafe, user),
           _buildTimeSetting(),
           _buildTime(idx),
           _buildBenefitSetting(),
-          _buildBenefit(idx)
+          _buildBenefit(idx),
+          _buildMenuSetting(),
+          _buildMenu(idx),
         ],
       ),
     );
@@ -128,7 +137,7 @@ _buildImageSection(int idx){
   );//Image.network('https://scontent-frt3-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/68691547_1170594069806054_2682214321596042182_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&oh=a54dd9b0fb9b4aeb0c4493a910f29c8e&oe=5DF0E8F8&ig_cache_key=MjExMjI2OTM3MDg5MjgxNTE5Mw%3D%3D.2',fit:BoxFit.fill);
 }
 
-_buildBotton(int idx, String cafe){
+_buildBotton(int idx, String cafe, FirebaseUser user){
   return Container(
       color: Colors.white,
       child: StreamBuilder(
@@ -176,7 +185,7 @@ _buildBotton(int idx, String cafe){
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => UploadPage(name: cafe)),
+                        MaterialPageRoute(builder: (context) => UploadPage(cafe, user)),
                       );
                     },
                   ),
@@ -249,7 +258,7 @@ _buildTime(int idx){
       color: Colors.white,
       margin: EdgeInsets.fromLTRB(32, 0, 16, 0),
       child: StreamBuilder(
-          stream: Firestore.instance.collection('요식업').snapshots(),
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
           builder: (context, snapshot){
             if(!snapshot.hasData) return Text('Loading data...');
             return Container(
@@ -392,6 +401,52 @@ _buildButtonItem(IconData icon, MaterialColor color, String name){
   );
 }
 
+_buildMenuSetting(){
+  return Container(
+    color: Colors.white,
+    margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
+    child: Text('주요 메뉴', style: TextStyle(
+      color: Colors.grey[800],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,)
+    ),
+  );
+}
+
+_buildMenu(int idx){
+  return Container(
+      color: Colors.white,
+      margin: EdgeInsets.fromLTRB(44, 0, 16, 0),
+      child: StreamBuilder(
+          stream: Firestore.instance.collection('카페 및 베이커리').snapshots(),
+          builder: (context, snapshot) {
+            var i = 0;
+            List<String> str = List();
+            for(i = 0; i<snapshot.data.documents[idx]['items'].length; i++) {
+              str.add(snapshot.data.documents[idx]['items'][i]);
+            }
+            if (!snapshot.hasData) return Text('Loading data...');
+            return
+              Container(
+                  margin: EdgeInsets.all(1),
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.documents[idx]['items'].length,
+                      itemBuilder: (context, index){
+
+                        return Container(
+                          margin: EdgeInsets.all(1),
+                          child: Text('${str[index]}',
+                            softWrap: true,
+                            style: TextStyle(color: Colors.grey[500]),
+                          ),
+                        );
+                      })
+              );
+          }
+      ));
+}
+
 _buildTextSection(){
   return Container(
     margin: EdgeInsets.all(16),
@@ -406,6 +461,10 @@ class EmptyPage extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          color: Colors.black,
+        ),
+        backgroundColor: Colors.white,
         title: Text("EmptyPage"),
       ),
     );
